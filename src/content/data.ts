@@ -91,32 +91,32 @@ export interface ExperienceItem {
 export const experience: ExperienceItem[] = [
   {
     company: "Wells Fargo",
-    role: "Software Developer",
-    period: "Aug 2025 →",
+    role: "SDE",
+    period: "Aug 2025 - Present",
     color: "blue",
     description:
       "Working in the {Corporate Investment Banking|blue} team, building the Orderbook platform that supports Debt Capital Market deals. Primarily focusing on {ReactJs frontend|green} development and resolving high-priority security vulnerabilities.",
   },
   {
     company: "Attenomics Lab",
-    role: "ML Engineer",
-    period: "Apr–Jun 2025",
+    role: "ML Engineer (Contract)",
+    period: "Apr 2025-Jun 2025",
     color: "green",
     description:
       "Built a custom {Machine Learning pipeline|green} to semantically score periodically scraped Tweets. Developed a {hybrid RAG system|purple} with multi-tiered retrieval strategy for the online Chain of Thought reasoning chatbot.",
   },
   {
     company: "NeoSapien",
-    role: "AI Developer",
-    period: "Aug 2024–Mar 2025",
+    role: "AI Developer Intern",
+    period: "Aug 2024-Mar 2025",
     color: "purple",
     description:
       "Implemented the {Second Brain pipeline|purple} using RAG, Self-discover, and Chain-of-Thought paradigms. Deployed retrieval and storage systems with {Firestore & Qdrant|blue}, reducing response latency by {46.5%|orange}.",
   },
   {
     company: "OnTheRecord Technology",
-    role: "Founding Engineer",
-    period: "Nov 2024–Jan 2025",
+    role: "ML Engineer (Contract)",
+    period: "Nov 2024-Jan 2025",
     color: "orange",
     description:
       "Worked on {BlueCat|orange}, a desktop application for legal proceedings transcription in courts. As a founding engineer, focused on {speech-to-text model|green} infrastructure and coding frontend components.",
@@ -124,7 +124,7 @@ export const experience: ExperienceItem[] = [
   {
     company: "Wells Fargo",
     role: "SDE Intern",
-    period: "May–Jul 2024",
+    period: "May 2024-Jul 2024",
     color: "yellow",
     description:
       "Delivered {RPA solutions|yellow} for the Process Transformation team. Built a full-stack application for algorithmic skill-based task-employee matching, reducing task allotment time by {98.75%|pink}.",
