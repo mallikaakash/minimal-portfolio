@@ -10,6 +10,7 @@ import {
   navigation,
   highlights,
   projects,
+  publications,
   highlightColors,
 } from "@/content/data";
 
@@ -36,7 +37,7 @@ export default function WorkPage() {
                 href={item.href}
                 className={`text-sm transition-colors ${
                   item.href === "/work"
-                    ? "text-foreground"
+                    ? "text-foreground font-medium"
                     : "text-foreground-muted hover:text-foreground"
                 }`}
               >
@@ -63,34 +64,10 @@ export default function WorkPage() {
       {/* Main Content */}
       <main className="flex-1 px-6 pt-20 pb-12">
         <div className="max-w-4xl mx-auto">
-          {/* Page Title */}
-          <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-8">
-            Work
-          </h1>
-
-          {/* Highlights & Achievements */}
-          <section className="mb-12">
-            <h2 className="text-xs uppercase tracking-wider text-foreground-muted mb-4">
-              Highlights & Achievements
-            </h2>
-
-            <div className="space-y-4">
-              {highlights.map((item, index) => (
-                <div key={index} className="group">
-                  <h3 className="font-medium">
-                    <span className={highlightColors[item.color]}>{item.title}</span>
-                  </h3>
-                  <p className="text-sm text-foreground-muted mt-1 leading-relaxed">
-                    {item.description}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
 
           {/* Projects */}
-          <section>
-            <h2 className="text-xs uppercase tracking-wider text-foreground-muted mb-4">
+          <section className="mb-10">
+            <h2 className="text-sm font-semibold text-foreground mb-4">
               Projects
             </h2>
 
@@ -147,6 +124,57 @@ export default function WorkPage() {
               ))}
             </div>
           </section>
+
+          {/* Publications */}
+          <section className="mb-10">
+            <h2 className="text-sm font-semibold text-foreground mb-4">
+              Publications
+            </h2>
+
+            <div className="space-y-4">
+              {publications.map((pub, index) => (
+                <div key={index} className="group">
+                  <h3 className="font-medium">
+                    <span className={highlightColors[pub.color]}>{pub.title}</span>
+                    {pub.link && (
+                      <a
+                        href={pub.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="ml-2 inline-flex items-center text-foreground-muted hover:text-foreground transition-colors"
+                        aria-label="View publication"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </a>
+                    )}
+                  </h3>
+                  <p className="text-sm text-foreground-muted mt-1">
+                    {pub.venue} · {pub.year}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Highlights & Achievements */}
+          <section>
+            <h2 className="text-sm font-semibold text-foreground mb-4">
+              Highlights & Achievements
+            </h2>
+
+            <div className="space-y-4">
+              {highlights.map((item, index) => (
+                <div key={index} className="group">
+                  <h3 className="font-medium">
+                    <span className={highlightColors[item.color]}>{item.title}</span>
+                  </h3>
+                  <p className="text-sm text-foreground-muted mt-1 leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
         </div>
       </main>
 
@@ -157,4 +185,3 @@ export default function WorkPage() {
     </div>
   );
 }
-

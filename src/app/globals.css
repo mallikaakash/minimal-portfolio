@@ -56,7 +56,7 @@
   --color-highlight-pink: var(--highlight-pink);
   --color-highlight-yellow: var(--highlight-yellow);
   --color-highlight-purple: var(--highlight-purple);
-  --font-serif: "Source Serif 4", "Spectral", Georgia, serif;
+  --font-serif: var(--font-serif), "Newsreader", Georgia, serif;
   --font-sans: var(--font-geist-sans);
 }
 
@@ -111,6 +111,16 @@ body {
   background: var(--highlight-purple);
   padding: 0.1em 0.3em;
   border-radius: 4px;
+}
+
+/* Dark mode - white text on highlights for contrast */
+.dark .highlight-green,
+.dark .highlight-orange,
+.dark .highlight-blue,
+.dark .highlight-pink,
+.dark .highlight-yellow,
+.dark .highlight-purple {
+  color: #ffffff;
 }
 
 /* Glassmorphism utilities */

@@ -206,10 +206,71 @@ export const projects: ProjectItem[] = [
 ];
 
 // =============================================================================
+// PUBLICATIONS
+// =============================================================================
+
+export interface PublicationItem {
+  title: string;
+  venue: string;
+  year: string;
+  link?: string;
+  color: HighlightColor;
+}
+
+export const publications: PublicationItem[] = [
+  {
+    title: "QGAPHnet: QGA Based Hybrid QLSTM Model for Soil Moisture Estimation",
+    venue: "IEEE IGARSS 2024, Athens",
+    year: "2024",
+    link: "https://ieeexplore.ieee.org/document/10641651",
+    color: "blue",
+  },
+];
+
+// =============================================================================
+// BLOG POSTS - External links to posts on various platforms
+// =============================================================================
+
+export type BlogPlatform = "medium" | "linkedin" | "notion" | "personal" | "dev" | "hashnode";
+
+export interface BlogPost {
+  title: string;
+  description: string;
+  url: string;
+  platform: BlogPlatform;
+  date: string; // Format: "YYYY-MM-DD"
+  tags?: string[];
+}
+
+export const blogPosts: BlogPost[] = [
+  // Add your blog posts here
+  // Example:
+  // {
+  //   title: "Building RAG Pipelines at Scale",
+  //   description: "How we reduced latency by 46.5% using hybrid retrieval strategies",
+  //   url: "https://medium.com/@aakashmallik/...",
+  //   platform: "medium",
+  //   date: "2024-12-01",
+  //   tags: ["AI", "RAG", "Machine Learning"],
+  // },
+];
+
+// Platform display names and icons
+export const platformLabels: Record<BlogPlatform, string> = {
+  medium: "Medium",
+  linkedin: "LinkedIn",
+  notion: "Notion",
+  personal: "Blog",
+  dev: "Dev.to",
+  hashnode: "Hashnode",
+};
+
+// =============================================================================
 // NAVIGATION
 // =============================================================================
 
 export const navigation = [
+  { name: "About", href: "/" },
   { name: "Work", href: "/work" },
   { name: "Blog", href: "/blog" },
 ];
