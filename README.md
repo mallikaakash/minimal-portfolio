@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Minimal Portfolio
 
-## Getting Started
+A clean, single-viewport portfolio built with Next.js 16 and Tailwind CSS 4. Features light/dark themes, colorful highlight syntax, and a single source of truth for all content.
 
-First, run the development server:
+## Quick Start
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Customization
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All content lives in **`src/content/data.ts`**. Edit this file to customize:
 
-## Learn More
+- Profile info (name, title, email, social links)
+- Bio with highlight syntax
+- Experience entries
+- Achievements & projects
+- Navigation links
 
-To learn more about Next.js, take a look at the following resources:
+### Highlight Syntax
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Use `{text|color}` in any text field:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```ts
+"I build {intelligent systems|orange} at {Microsoft|blue}"
+```
 
-## Deploy on Vercel
+Available colors: `blue`, `green`, `orange`, `purple`, `pink`, `yellow`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Structure
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+src/
+├── app/
+│   ├── page.tsx         # Homepage
+│   ├── work/page.tsx    # Work & projects
+│   └── blog/page.tsx    # Blog (placeholder)
+├── content/
+│   └── data.ts          # ← All editable content
+└── lib/
+    ├── theme.tsx        # Theme provider
+    └── utils.tsx        # Highlight parser
+```
+
+## Deploy
+
+```bash
+npm run build
+```
+
+Deploy to [Vercel](https://vercel.com) or any Node.js host.
+
+## License
+
+MIT
