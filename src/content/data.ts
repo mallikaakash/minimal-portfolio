@@ -59,13 +59,13 @@ export const education: EducationItem[] = [
     institution: "NIT Karnataka, Surathkal",
     degree: "B.Tech EEE, Minor in CS",
     score: "8.07 CGPA",
-    period: "2021–25",
+    period: "2021-25",
   },
   {
     institution: "National Public School, Rajajinagar",
     degree: "CBSE Class XII",
     score: "97.6%",
-    period: "2021",
+    period: "2019-21",
   },
   {
     institution: "Presidency School, Nandini Layout",
@@ -153,6 +153,16 @@ export const highlights: HighlightItem[] = [
     color: "blue",
   },
   {
+    title: "IEEE IGARSS 2025",
+    description: "Accepted paper for IEEE IGARSS 2025. One of the few Btech students to receive a fully funded travel grant and registration fee waiver to attend the conference.",
+    color: "orange",
+  },
+  {
+    title: "KUKUFM National Project K hackathon 2025",
+    description: "First Runner Up at KukuFm National Project K hackathon (150+ teams)",
+    color: "purple",
+  },
+  {
     title: "KVPY SX 2021",
     description: "All India Rank 1373 out of 0.6 Million candidates in the Kishore Vaigyanik Protsahan Yogna examination.",
     color: "green",
@@ -185,6 +195,16 @@ export interface ProjectItem {
 
 export const projects: ProjectItem[] = [
   {
+    name: "WalGraph",
+    description:
+      "Built a scalable decentralized graph database using SUI blockchain and Walrus protocol for decentralized storage. Implemented Cypher-like query engine and an interactive D3.js interface for visualization, querying, and analytics.",
+    tech: ["Next.js", "Typescript", "SUI Blockchain", "Walrus", "Move"],
+    github: "https://github.com/violinadoley/WalGraph",
+    period: "Mar 2025",
+    color: "purple",
+    achievement: "First Runner Up in the Programmable Storage track at SUI Overflow 2025 out of 600+ teams",
+  },
+  {
     name: "KathaAI",
     description:
       "Developed an iterative context solution to increase context length and preserve intent for writing long-form novels based on author specifications.",
@@ -195,9 +215,9 @@ export const projects: ProjectItem[] = [
     achievement: "First Runner Up at KukuFm National Project K hackathon (150+ teams)",
   },
   {
-    name: "Great Bangalore Hackathon 2025",
+    name: "Smart Ride Matching with Demand Prediction",
     description:
-      "Built a novel solution to improve driver-customer matching and reduce cancellations with a dynamic pricing system. Deployed a masked autoencoder model to predict customer requests and proactively guide drivers to hotspots.",
+      "Built a novel solution to improve driver-customer matching and reduce cancellations with a dynamic pricing system @The Great Bangalore Hackathon 2025 . Deployed a masked autoencoder model to predict customer requests and proactively guide drivers to hotspots.",
     tech: ["Next.js", "MapBox", "Gemini"],
     github: "https://github.com/mallikaakash/TGBH-StackedPitha",
     period: "Mar 2025",

@@ -127,7 +127,7 @@ export default function Home() {
                 <div className="space-y-2">
                   {education.map((edu, index) => (
                     <p key={index} className="text-sm">
-                      <span className="font-medium">{edu.institution}</span>
+                      <span className="text-base">{edu.institution}</span>
                       <span className="text-foreground-muted">
                         {" : "}
                         {edu.degree} · {edu.score} · {edu.period}
