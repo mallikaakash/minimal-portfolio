@@ -176,10 +176,10 @@ export default function BlogPage() {
               </div>
               <div className="flex-1">
                 <h3 className="font-medium text-sm sm:text-base mb-1">
-                  Subscribe to <span className={highlightColors.green}>Substack NewsLetter</span> ✨
+                  Subscribe to <span className={highlightColors.green}>my Substack</span> ✨
                 </h3>
                 <p className="text-xs sm:text-sm text-foreground-muted leading-relaxed mb-3">
-                  Deep dives into ML research. AI Systems and everything in between.
+                  Deep dives into ml research, Agenticsystems and everything in between.
                 </p>
                 <a
                   href={profile.social.substack}

@@ -1,11 +1,11 @@
 ---
 title: "A Tangent into Optimal Transport: Entropy, Sinkhorn, and Geometry"
-date: "2026-01-03"
+date: "2026-01-08"
 description: "An explorative dive into the Optimal Transport problem, entropy regularization, and how the Sinkhorn-Knopp algorithm makes it computationally feasible and differentiable."
 author: "Aakash Mallik"
 readingTime: 12
-tags: ["Machine Learning", "Mathematics", "Optimization", "Deep Learning"]
-substackUrl: "https://aakashmallik1.substack.com/"
+tags: ["Machine Learning", "Mathematics","Optimization Theory"]
+substackUrl: "https://mallikaakash.substack.com/p/a-tangent-into-optimal-transport"
 ---
 
 Deepseek's recent paper on the eve of New Year made quite a buzz - all for the right reasons. It brought forth discussions on the [Hyper Connections](https://arxiv.org/pdf/2409.19606) framework - a step up from the original residual connections. However, [DeepSeek mHC](https://arxiv.org/pdf/2512.24880) improves representational efficiency by introducing a structured, matrix-valued intermediary on residual pathways, allowing contextual information to be preserved and redistributed across layers rather than simply added. The paper makes use of the <Hl color="purple">Sinkhorn–Knopp algorithm</Hl> (*the algorithm we will look into today*) to compute a doubly stochastic matrix, which enforces balanced and stable information routing across the residual stream. Doubly stochastic is a mathematician's fancy way of saying that the **rows as well as the columns of a matrix sum to unity** and all the elements are **non-negative**. It is an iterative algorithm - alternately rescaling the rows and columns via multiplicative diagonal scaling to enforce the marginal constraints.

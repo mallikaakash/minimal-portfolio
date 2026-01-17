@@ -27,7 +27,7 @@ export const profile = {
   bio: [
     "{Researcher|orange} and {Software Engineer|blue}. Currently at {Wells Fargo|blue}, working on Debt Capital Market platforms. I explore Agentic AI systems and implement them in my free time. ",
     "Previously shipped {RAG pipelines|purple} at NeoSapien, built speech-to-text infrastructure at OnTheRecord, and won {SUI Overflow 2025|pink}.",
-    "Love exploring different stuff. {Philosophy|purple}, {Literature|orange}, {Anime|pink}, {Webtoons|green} and {Gym|yellow } take up a major chunk of my time too.",
+    "Love exploring different stuff. {Philosophy|purple}, {Literature|orange}, {Anime|pink}, {Webtoons|green} and {Gym|yellow} take up a major chunk of my time too.",
   ],
 };
 

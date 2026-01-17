@@ -115,7 +115,7 @@ export default function Home() {
                   href={`mailto:${profile.email}`}
                   className="text-sm text-foreground-muted hover:text-foreground underline transition-colors"
                 >
-                  {profile.email}
+                  Resume
                 </a>
               </div>
 
