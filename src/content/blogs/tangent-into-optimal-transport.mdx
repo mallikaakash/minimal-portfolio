@@ -1,0 +1,111 @@
+---
+title: "A Tangent into Optimal Transport: Entropy, Sinkhorn, and Geometry"
+date: "2026-01-03"
+description: "An explorative dive into the Optimal Transport problem, entropy regularization, and how the Sinkhorn-Knopp algorithm makes it computationally feasible and differentiable."
+author: "Aakash Mallik"
+readingTime: 12
+tags: ["Machine Learning", "Mathematics", "Optimization", "Deep Learning"]
+substackUrl: "https://aakashmallik1.substack.com/"
+---
+
+Deepseek's recent paper on the eve of New Year made quite a buzz - all for the right reasons. It brought forth discussions on the [Hyper Connections](https://arxiv.org/pdf/2409.19606) framework - a step up from the original residual connections. However, [DeepSeek mHC](https://arxiv.org/pdf/2512.24880) improves representational efficiency by introducing a structured, matrix-valued intermediary on residual pathways, allowing contextual information to be preserved and redistributed across layers rather than simply added. The paper makes use of the <Hl color="purple">Sinkhorn–Knopp algorithm</Hl> (*the algorithm we will look into today*) to compute a doubly stochastic matrix, which enforces balanced and stable information routing across the residual stream. Doubly stochastic is a mathematician's fancy way of saying that the **rows as well as the columns of a matrix sum to unity** and all the elements are **non-negative**. It is an iterative algorithm - alternately rescaling the rows and columns via multiplicative diagonal scaling to enforce the marginal constraints.
+
+However this isn't about the Deepseek-mHC paper - this is a blog detailing my explorative learning on a tangential topic - <Hl color="orange">The Optimal Transport problem</Hl> - and how Sinkhorn Knopp algorithm is used to solve an entropy regularized variant of it.
+
+## Optimal Transport Problem
+
+Optimal transport basically says - *Find me the minimum cost of transferring this amount from set of points in region A to set of points in region B given the cost of individual transfers from one-to-one points in both regions.*
+
+![Optimal Transport Visualization](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe7eeb71e-27ff-4ab5-8351-3aa511c67a54_1308x464.png)
+
+It is a <Hl color="blue">Wasserstein distance</Hl><Sidenote id={1}>Yes we have Wasserstein GANs and OT does make its fair share of cameos in different concepts. We know its distant cousin VERY WELL - say hello KL divergence (more on that later).</Sidenote> - yes we have Wasserstein GANs and OT does make its fair share of cameos in different concepts.
+
+Now it seems to be a rather simple straight forward linear programming problem. Yes it is. However trying to solve this computationally turns out to be a tad bit non-trivial - hitting a <Hl color="pink">time complexity of O(n³ log n)</Hl>. Yeah that's bad - especially when we start considering the millions of points in any ML problem. To mitigate this issue and lower the time complexity by several orders of magnitude, [Marco Cuturi](https://arxiv.org/pdf/1306.0895) introduced entropy regularization.
+
+## Entropy Makes All the Differen(tiate)ce
+
+Marco Cuturi came up with this brilliant idea - adding an entropy regularization term to the objective function.
+
+So now we reformulate it as minimizing: **⟨C, P⟩ - εH(P)**
+
+where **C** is the Cost Matrix, **P** is the Transport Plan and **H(P)** is the Shannon Entropy.
+
+Cool but how does it help and how do we exactly solve it? Let's look at this through the lens of a pen-paper numerical dry run.
+
+### Setting Up the Problem
+
+Let's take:
+
+- **Supply:** Factory A (60 units), Factory B (40 units)
+- **Demand:** Store 1 (70 units), Store 2 (30 units)
+- **Shipping costs per unit:** (see matrix below)
+
+Now we begin the solution formulation - considering a Transport Plan **P**:
+
+![Transport Plan and Objective Function](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F8e6854ba-eba3-4a6f-81dd-57befee33b69_874x514.png)
+
+And from this we get our **Objective Function**.
+
+Solving this using Linear Programming, we obtain the optimal solution. In some cases, multiple optimal transport plans may exist with the same minimum cost (though this is less common). All optimal solutions lie at vertices of the <Hl color="green">transportation polytope</Hl> U(a,b)<Sidenote id={2}>A polytope is a geometric object with flat sides. For example: a 2D polytope is polygon, 3D polyhedron, 4D tesseract and so on. **a** and **b** are the row and column marginals and **P*** is the optimal minimum Transport Plan.</Sidenote>.
+
+![Transport Polytope Solution](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2F885d3e6e-c605-4471-9094-623e76e41b78_790x590.png)
+
+**Interpretation:** Ship everything from A to Store 1, use B for remainder and Store 2.
+
+It has a time complexity of **O(n³ log n)**.
+
+## Solving using Entropy Regularized OT and Sinkhorn
+
+So we add entropy to the mix - which allows us a bit of flexibility - *"Make sure we get cheap cost but fine let there be some idhar udhar ka kharcha"*<Sidenote id={3}>Hindi phrase roughly meaning "some here-and-there expenses" — acknowledging small inefficiencies for the greater good.</Sidenote>. This allows us to hedge our bets and not over-concentrate in a single route - spread out, distribute evenly. Hence we trade a concentrated exact solution for reduced compute. Also exactness isn't always favourable, not in ML.
+
+Moreover, <Hl color="orange">entropy makes the overall function differentiable</Hl>. Without entropy when we get the exact solution, the solution often lies at the vertex of the transport polytope - making the solution map C → P non-smooth as gradients become **undefined or discontinuous** at vertices. Even a small perturbation in the cost makes the solution jump to another vertex. Adding entropy regularization yields a unique interior solution with a smooth dependence on C.
+
+We also convert the constrained minimize ⟨C,P⟩ - εH(P) problem into its Lagrangian form<Sidenote id={4}>Derivation not included. Look it up though - it's interesting!</Sidenote> to end up with this form:
+
+**P = diag(u) · K · diag(v)**
+
+where **u** and **v** are scaling vectors (*drumrolls... <Hl color="purple">Sinkhorn Knopp Iterative Algorithm</Hl>*) and **K** is the Gibbs Kernel (*yes from physics*) equal to:
+
+**K = exp(-C/ε)**
+
+The <Hl color="blue">Gibbs Kernel K</Hl> is smooth everywhere and the entropy-regularized OT objective is strictly convex in P. This makes the solution map differentiable, allowing gradients of P w.r.t. C to be computed either by unrolling Sinkhorn iterations or via implicit differentiation (useful for PyTorch autograd). A higher K value denotes a lower cost (-ve sign) and prefers that path and vice versa, making the distances and similarity measures truly aware of the underlying geometry of the function.
+
+### The Sinkhorn Iterations
+
+Starting with u=[1, 1] and v=[1, 1] and iteratively solving the above equation for P we get the following solution over 43 iterations:
+
+![Sinkhorn Convergence](https://substackcdn.com/image/fetch/f_auto,q_auto:good,fl_progressive:steep/https%3A%2F%2Fsubstack-post-media.s3.amazonaws.com%2Fpublic%2Fimages%2Fe7c4ea4f-29df-400b-9873-93271bd27824_1056x920.png)
+
+The <Hl color="green">epsilon value</Hl> can be in the range (0, ∞) to control the regularization strength:
+
+- At **ε → 0**: it becomes the strict vanilla Optimal Transport problem
+- At **ε → ∞**: it approaches independent coupling
+
+The higher the epsilon value, the more it encourages the Sinkhorn–Knopp algorithm to find a smoother, more spread-out transport plan, while smaller epsilon values tighten the entropy regularization toward zero. In practice, smaller epsilon values also lead to slower convergence due to poorer numerical conditioning.
+
+## The KL Divergence Connection
+
+Interestingly the entropy term here can be reformulated as the <Hl color="orange">Kullback–Leibler divergence</Hl>. What makes this connection interesting is that entropy-regularized optimal transport can be viewed as searching for a transport plan that is not only cheap in terms of cost, but also close - under KL divergence - to a simple, factorized reference coupling. In this view, Sinkhorn is not directly "minimizing entropy", but repeatedly projecting the transport plan onto the marginal constraints while staying close, in an information-theoretic sense, to a smooth prior. This is precisely where the <Hl color="purple">KL geometry</Hl> enters the picture - the algorithm trades off geometric fidelity with informational proximity. The entropy term acts as the bridge.
+
+A notable difference between the two:
+
+- **Wasserstein distances** (such as OT) explicitly respect the underlying geometry
+- **KL divergence** is largely oblivious to it - it acts more like a dissimilarity measure
+
+KL does not account for *how far* mass moves, only *how much* distributions differ. This makes KL well-suited for variational inference and comparisons over the same discrete support. Wasserstein distances, on the other hand, become crucial when geometry and localization matter - such as in images, audio, or spatial data<Sidenote id={5}>This is why Wasserstein GANs were a breakthrough — they provided meaningful gradients even when distributions had non-overlapping support, unlike KL-based objectives.</Sidenote>.
+
+## Applications and Conclusion
+
+Optimal Transport has found its use in multiple domains - I am still learning and exploring them (*maybe stuff for another blog?*). However its most popular usage includes:
+
+- **Domain Adaptation**
+- **Earth Mover's Distance**
+- **Style Transfer**
+- **Color Transfer**
+- **Wasserstein GAN**
+
+It was fun riding on a tangent and exploring and learning this from scratch. Writing a blog for the first time on this was an even better reinforcement. Optimal Transport, especially some of the applications that I came across while exploring, has no doubt piqued my interest and I will be studying a couple of these subsets.
+
+---
+
+<Hl color="blue">**TL;DR:**</Hl> Optimal Transport transforms one distribution into another by minimizing a transportation cost. Adding an entropy regularizer makes this problem computationally feasible and differentiable, allowing it to be solved efficiently using the Sinkhorn–Knopp algorithm.

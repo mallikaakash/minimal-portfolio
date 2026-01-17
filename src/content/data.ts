@@ -19,12 +19,15 @@ export const profile = {
   social: {
     github: "https://github.com/mallikaakash",
     linkedin: "https://linkedin.com/in/aakash-mallik-82b99423b/",
+    substack: "https://aakashmallik1.substack.com/",
+    
   },
 
   // Short bio for the homepage - use {highlight} syntax for colored spans
   bio: [
-    "I build {intelligent systems|orange} at the intersection of AI and software engineering. Currently at {Wells Fargo|blue}, working on Debt Capital Market platforms.",
-    "Previously shipped {RAG pipelines|purple} at NeoSapien (reduced latency by 46.5%), built speech-to-text infrastructure at OnTheRecord, and won {SUI Overflow 2025|pink} globally.",
+    "{Researcher|orange} and {Software Engineer|blue}. Currently at {Wells Fargo|blue}, working on Debt Capital Market platforms. I explore Agentic AI systems and implement them in my free time. ",
+    "Previously shipped {RAG pipelines|purple} at NeoSapien, built speech-to-text infrastructure at OnTheRecord, and won {SUI Overflow 2025|pink}.",
+    "Love exploring different stuff. {Philosophy|purple}, {Literature|orange}, {Anime|pink}, {Webtoons|green} and {Gym|yellow } take up a major chunk of my time too.",
   ],
 };
 
@@ -57,7 +60,7 @@ export interface EducationItem {
 export const education: EducationItem[] = [
   {
     institution: "NIT Karnataka, Surathkal",
-    degree: "B.Tech EEE, Minor in CS",
+    degree: "B.Tech EEE, Minor in CSE",
     score: "8.07 CGPA",
     period: "2021-25",
   },
@@ -292,6 +295,6 @@ export const platformLabels: Record<BlogPlatform, string> = {
 export const navigation = [
   { name: "About", href: "/" },
   { name: "Work", href: "/work" },
-  { name: "Blog", href: "/blog" },
+  { name: "Writings", href: "/blog" },
 ];
 
