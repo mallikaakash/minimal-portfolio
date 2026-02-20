@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Newsreader } from "next/font/google";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme";
 
@@ -51,6 +52,7 @@ export default function RootLayout({
             strategy="lazyOnload"
           />
         )}
+        <Analytics />
       </body>
     </html>
   );
