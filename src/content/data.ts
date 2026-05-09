@@ -16,11 +16,14 @@ export const profile = {
   email: "aakashmallik7777@gmail.com",
   location: "India",
 
+  resume: "/Aakash_Resume.pdf",
+
   social: {
     github: "https://github.com/mallikaakash",
     linkedin: "https://linkedin.com/in/aakash-mallik-82b99423b/",
     substack: "https://aakashmallik1.substack.com/",
-    
+    medium: "https://medium.com/@aakashmallik7777",
+    // x: "https://x.com/yourhandle",
   },
 
   // Short bio for the homepage - use {highlight} syntax for colored spans
@@ -94,43 +97,43 @@ export interface ExperienceItem {
 export const experience: ExperienceItem[] = [
   {
     company: "Wells Fargo",
-    role: "SDE",
+    role: "Software Developer",
     period: "Aug 2025 - Present",
     color: "blue",
     description:
-      "Working in the {Corporate Investment Banking|blue} team, building the Orderbook platform that supports Debt Capital Market deals. Primarily focusing on {ReactJs frontend|green} development and resolving high-priority security vulnerabilities.",
+      "Working on the {New Issuance Trading platform|blue} with {ReactJs and Redux|green}, supporting all Debt Capital Market transactions across production releases. Also building {agentic workflows and MCPs|purple} to improve business-context awareness in coding assistants; developed an AI-assisted PR review system cutting review time by {30%|orange}. Owning migration from WAF & Selenium to {Playwright|blue}.",
   },
   {
     company: "Attenomics Lab",
     role: "ML Engineer (Contract)",
-    period: "Apr 2025-Jun 2025",
+    period: "Apr 2025 - Jun 2025",
     color: "green",
     description:
-      "Built a custom {Machine Learning pipeline|green} to semantically score periodically scraped Tweets. Developed a {hybrid RAG system|purple} with multi-tiered retrieval strategy for the online Chain of Thought reasoning chatbot.",
+      "Developed a {DistilBERT model with triplet loss|green} pipeline to semantically score high-volume scraped Tweets — improved performance by {~10%|green} over baseline and cut operational cost by {~$200/month|orange}. Built a {hybrid RAG system|purple} with multi-tiered retrieval for a Reasoning Brand Marketing & Insights chatbot.",
   },
   {
     company: "NeoSapien",
-    role: "AI Developer Intern",
-    period: "Aug 2024-Mar 2025",
+    role: "ML Developer Intern",
+    period: "Aug 2024 - Mar 2025",
     color: "purple",
     description:
-      "Implemented the {Second Brain pipeline|purple} using RAG, Self-discover, and Chain-of-Thought paradigms. Deployed retrieval and storage systems with {Firestore & Qdrant|blue}, reducing response latency by {46.5%|orange}.",
+      "Implemented the {Second Brain pipeline|purple} using RAG, Self-discover, and Chain-of-Thought paradigms — evaluated prompting, chunking, and embedding strategies for the QA Chatbot. Deployed retrieval and storage back-end systems with {Firestore & Qdrant|blue}, reducing pipeline response latency by {46.5%|orange}.",
   },
   {
     company: "OnTheRecord Technology",
     role: "ML Engineer (Contract)",
-    period: "Nov 2024-Jan 2025",
+    period: "Nov 2024 - Jan 2025",
     color: "orange",
     description:
-      "Worked on {BlueCat|orange}, a desktop application for legal proceedings transcription in courts. As a founding engineer, focused on {speech-to-text model|green} infrastructure and coding frontend components.",
+      "Worked on {BlueCat|orange}, a desktop application for legal proceedings transcription in courts. As a founding engineer, built {speech-to-text model|green} infrastructure and coded key frontend components.",
   },
   {
     company: "Wells Fargo",
     role: "SDE Intern",
-    period: "May 2024-Jul 2024",
+    period: "May 2024 - Jul 2024",
     color: "yellow",
     description:
-      "Delivered {RPA solutions|yellow} for the Process Transformation team. Built a full-stack application for algorithmic skill-based task-employee matching, reducing task allotment time by {98.75%|pink}.",
+      "Led a 3-member team in the {Process Transformation|yellow} group, delivering {RPA solutions|yellow} to replace manual workflows. Built a full-stack {skill-based task matching|green} platform serving ~1200 employees, reducing task allotment time by {~98%|pink}.",
   },
 ];
 
@@ -212,7 +215,7 @@ export const projects: ProjectItem[] = [
     description:
       "Developed an iterative context solution to increase context length and preserve intent for writing long-form novels based on author specifications.",
     tech: ["Next.js", "React", "MapBox", "Gemini", "SarvamAI"],
-    github: "https://github.com/mallikaakash/TGBH-StackedPitha",
+    github: "https://github.com/mallikaakash/Katha.Ai",
     period: "Mar 2025",
     color: "purple",
     achievement: "First Runner Up at KukuFm National Project K hackathon (150+ teams)",
@@ -254,7 +257,7 @@ export const publications: PublicationItem[] = [
 // BLOG POSTS - External links to posts on various platforms
 // =============================================================================
 
-export type BlogPlatform = "medium" | "linkedin" | "notion" | "personal" | "dev" | "hashnode";
+export type BlogPlatform = "medium" | "linkedin" | "notion" | "personal" | "dev" | "hashnode" | "x" | "substack";
 
 export interface BlogPost {
   title: string;
@@ -278,7 +281,7 @@ export const blogPosts: BlogPost[] = [
   // },
 ];
 
-// Platform display names and icons
+// Platform display names
 export const platformLabels: Record<BlogPlatform, string> = {
   medium: "Medium",
   linkedin: "LinkedIn",
@@ -286,6 +289,8 @@ export const platformLabels: Record<BlogPlatform, string> = {
   personal: "Blog",
   dev: "Dev.to",
   hashnode: "Hashnode",
+  x: "X",
+  substack: "Substack",
 };
 
 // =============================================================================

@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import Image from "next/image";
+import { ExternalLink } from "lucide-react";
 import { BlogFrontmatter, formatBlogDate } from "@/lib/blog";
 
 interface BlogLayoutProps {
@@ -7,31 +8,92 @@ interface BlogLayoutProps {
   children: ReactNode;
 }
 
+const PLATFORM_LABELS: Record<string, string> = {
+  substack: "Substack",
+  medium: "Medium",
+  x: "X",
+  dev: "Dev.to",
+  hashnode: "Hashnode",
+  linkedin: "LinkedIn",
+  notion: "Notion",
+};
+
 export function BlogLayout({ frontmatter, children }: BlogLayoutProps) {
-  const { title, date, readingTime, author, headerImage, coverImage, coverCaption } = frontmatter;
+  const {
+    title,
+    date,
+    readingTime,
+    author,
+    tags,
+    coverImage,
+    coverCaption,
+    substackUrl,
+    externalUrls,
+  } = frontmatter;
+
+  // Collect all external platform links
+  const platformLinks: { label: string; url: string }[] = [];
+  if (substackUrl) platformLinks.push({ label: "Substack", url: substackUrl });
+  if (externalUrls) {
+    externalUrls.forEach(({ platform, url }) => {
+      platformLinks.push({ label: PLATFORM_LABELS[platform] ?? platform, url });
+    });
+  }
 
   return (
     <article className="blog-article">
-      {/* Header Sticker/Illustration (optional) */}
-      {headerImage && (
-        <div className="blog-header-sticker">
-          <Image
-            src={headerImage}
-            alt=""
-            width={200}
-            height={200}
-            priority
-            style={{ justifyContent: "center", alignItems: "center", width: "auto", height: "auto", maxHeight: "200px" }}
-          />
+      {/* Tags at the very top */}
+      {tags && tags.length > 0 && (
+        <div className="blog-tags">
+          {tags.map((tag) => (
+            <span key={tag} className="blog-tag-pill">
+              {tag}
+            </span>
+          ))}
         </div>
       )}
 
-      {/* Header */}
-      <header className="blog-header justify-center align-center">
-        <h1 className="text-center">{title}</h1>
+      {/* Post header */}
+      <header className="blog-header">
+        <h1>{title}</h1>
+
+        {/* Meta row: author · date · reading time */}
+        <div className="blog-meta">
+          {author && <span>{author}</span>}
+          {author && date && <span className="meta-sep">·</span>}
+          {date && <span>{formatBlogDate(date)}</span>}
+          {readingTime && (
+            <>
+              <span className="meta-sep">·</span>
+              <span>{readingTime} min read</span>
+            </>
+          )}
+        </div>
+
+        {/* Also on: external platform links */}
+        {platformLinks.length > 0 && (
+          <div className="blog-external-links">
+            <span className="also-on-label">Also on</span>
+            {platformLinks.map(({ label, url }) => (
+              <a
+                key={url}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="blog-platform-link"
+              >
+                {label}
+                <ExternalLink className="w-2.5 h-2.5" />
+              </a>
+            ))}
+          </div>
+        )}
       </header>
 
-      {/* Cover Image (optional full-width image) */}
+      {/* Dotted separator before prose */}
+      <div className="blog-dotted-separator" />
+
+      {/* Optional cover image */}
       {coverImage && (
         <figure className="blog-cover">
           <Image
@@ -50,7 +112,7 @@ export function BlogLayout({ frontmatter, children }: BlogLayoutProps) {
         </figure>
       )}
 
-      {/* Content */}
+      {/* Main prose content */}
       <div className="blog-prose">{children}</div>
     </article>
   );

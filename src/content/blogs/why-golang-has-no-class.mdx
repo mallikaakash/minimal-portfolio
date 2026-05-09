@@ -1,0 +1,133 @@
+---
+title: "Why Golang Has No Class — And Why That's Exactly The Way to Go"
+date: "2026-05-09"
+description: "Go ditched classes — but it's more object-oriented than you think. A quick sketch of Go's composition-first philosophy, the DCI paradigm, and why structs + interfaces beat deep inheritance."
+author: "Aakash Mallik"
+readingTime: 6
+tags: ["Golang", "Software Engineering", "Distributed Systems", "OOP"]
+externalUrls:
+  - platform: medium
+    url: "https://medium.com/@aakashmallik7777/why-golang-has-no-class-and-why-thats-exactly-the-way-to-go-f0c62e4aec76"
+---
+
+Ever since my Class X ICSE Computer Science textbook defined OOP as *"a class which is a blueprint for objects"* and *"encapsulation = bundling data and behavior"*, it's been set in stone for me that classes are the de-facto paradigm for Object-Oriented Programming. Until yesterday.
+
+I recently started learning <Hl color="green">Golang</Hl> alongside distributed systems patterns. And it's been barely a day since I realised — **Golang doesn't have classes**. *WUT?*
+
+So it's a Procedure-Oriented language? Nope. Golang is almost as object-oriented as they come. It just follows a different philosophy, a different paradigm — and to understand it, we need to internalise one thing first:
+
+> **"Paradigm is not the Implementation"**
+
+## Why Go Even Exists
+
+Go was built by a few dissatisfied engineers at Google — <Hl color="blue">Rob Pike, Ken Thompson, and Robert Griesemer</Hl>.<Sidenote id={1}>Pike designed UTF-8 with Thompson. Thompson wrote the original Unix. These aren't people who write throwaway languages.</Sidenote> After years of building massive distributed infrastructure, they saw the gaps in existing languages — slow build times, complex concurrency models, verbosity, and abstraction-heavy design patterns that led to tightly coupled systems.
+
+So they built a simpler, faster, easier-concurrency systems language, well-suited for cloud and distributed architectures. That was Go.
+
+## Enter DCI — Data, Context, Interaction
+
+Now, we've been so dogmatised by the class-based OOP mental model that we forget there are other schools of thought. One of the more interesting ones is <Hl color="orange">DCI — Data, Context, Interaction</Hl>.<Sidenote id={2}>DCI was introduced by Trygve Reenskaug — the same person who invented MVC. Worth reading: fulloo.info</Sidenote>
+
+DCI deconstructs "**what it is**" from "**how it behaves**" in a system:
+
+- **Data** — how information is represented as stand-alone objects
+- **Context** — runtime networks of interconnected objects playing roles
+- **Interaction** — how networked objects collaborate to achieve system behavior
+
+DCI *evolves* OOP. It surfaces the behavior that class-based OOP hides behind inheritance trees. In large distributed systems, deep inheritance chains tend to entangle responsibilities — retries, logging, metrics — inside base classes, making control flow implicit and tightly coupled. Changing one layer risks breaking many others.
+
+## What Go Does Instead
+
+Go replaces classes with <Hl color="purple">structs, interfaces, and methods</Hl>. This encourages **composition over inheritance** — systems assembled from small, explicit components rather than extended from a shared base class.
+
+Each piece is a small, independent unit of data:
+
+```go
+type FileStore struct {
+    Path string
+}
+
+type MemoryStore struct {
+    Data map[string]string
+}
+```
+
+Behavior is added separately using methods, and higher-level behavior is wired together using interfaces:
+
+```go
+type Store interface {
+    Save(key, value string)
+}
+
+func (f FileStore) Save(key, value string) {
+    // write to file
+}
+
+func (m MemoryStore) Save(key, value string) {
+    // store in memory map
+}
+
+func Persist(s Store) {
+    // Interface-based polymorphism:
+    // same call, different behavior depending on the concrete type
+    s.Save("user:1", "Jack")
+}
+```
+
+This makes dependencies **visible and explicit**. Developers consciously decide how behavior is combined, rather than inheriting it implicitly.
+
+## Why This Maps to Distributed Systems
+
+This model is particularly effective in distributed systems because it <Hl color="green">mirrors real-world architecture</Hl>. Each layer can correspond to a middleware, proxy, or even a sidecar in a service mesh.
+
+You can reorder layers, swap implementations, or disable features without touching unrelated parts of the system. Replacing the retry strategy or disabling logging is a matter of **changing composition**, not rewriting class hierarchies.
+
+Polymorphism still exists — it's just achieved through interfaces rather than inheritance.
+
+### Code Reuse via Struct Embedding
+
+Go implements code reuse through <Hl color="blue">struct embedding</Hl>. Instead of redefining shared behavior everywhere:
+
+```go
+type Logger struct{}
+
+func (Logger) Log(msg string) {
+    println("LOG:", msg)
+}
+
+type FileStore struct {
+    Logger
+    Path string
+}
+
+type MemoryStore struct {
+    Logger
+    Data map[string]string
+}
+```
+
+Just mention `Logger` and `FileStore` has it. `FileStore` is not *a* `Logger` — it *has* a `Logger`. That's a subtler but meaningful distinction.
+
+## The Java Comparison
+
+A direct contemporary to Java's `implements` keyword — Java uses explicit interface implementation; Go uses <Hl color="orange">implicit interface satisfaction</Hl>.<Sidenote id={3}>If a type has all the methods an interface requires, it satisfies the interface — no declaration needed. This is called structural typing or "duck typing" at compile time.</Sidenote> Both model behavior contracts, but Go is less rigid.
+
+In Java, `FileStore implements Store` binds the identity of `FileStore` to `Store`. In Go, `FileStore` just happens to have what `Store` needs. It could satisfy many other interfaces simultaneously, none of them rigidly defining its existence.
+
+Sounds like a trivial semantic difference. It hides a much deeper design principle.
+
+## The Punchline
+
+In order to align with a <Hl color="purple">composition-first</Hl> philosophy — to loosen coupling and shift the mental model from rigid object boundaries to a more lego-block-like, bottom-up construction — Golang is classless.
+
+This isn't an exhaustive commentary. It's a quick sketch of my understanding of Go and the broader field of distributed systems design — a WIP, and an attempt to keep writing more.
+
+---
+
+**Further reading:**
+
+- [Paradigm is not implementation](https://medium.com/@egonelbre/paradigm-is-not-the-implementation-af4c1489c073) — Egon Elbre
+- [DCI Architecture](https://fulloo.info/) — Trygve Reenskaug
+- [Why people say Go is not OO](https://www.reddit.com/r/golang/comments/a9rn6n/why_people_claim_that_go_is_not_object_oriented/) — Reddit thread
+
+<Hl color="blue">**TL;DR:**</Hl> Go replaces class-based inheritance with structs + interfaces + embedding. The result is a composition-first language where behavior is explicit, dependencies are visible, and systems are easy to reason about — exactly what you want when building distributed infrastructure.

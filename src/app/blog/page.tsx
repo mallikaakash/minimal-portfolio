@@ -8,12 +8,11 @@ import Link from "next/link";
 import {
   navigation,
   blogPosts,
-  platformLabels,
   highlightColors,
   profile,
+  BlogPlatform,
 } from "@/content/data";
 
-// Type for internal blog posts (fetched from API)
 interface InternalPost {
   slug: string;
   frontmatter: {
@@ -23,8 +22,61 @@ interface InternalPost {
     readingTime?: number;
     tags?: string[];
     substackUrl?: string;
+    externalUrls?: { platform: string; url: string }[];
   };
 }
+
+type UnifiedPost =
+  | {
+      kind: "internal";
+      slug: string;
+      title: string;
+      description: string;
+      date: string;
+      readingTime?: number;
+      tags?: string[];
+      substackUrl?: string;
+      externalUrls?: { platform: string; url: string }[];
+    }
+  | {
+      kind: "external";
+      url: string;
+      title: string;
+      description: string;
+      date: string;
+      platform: BlogPlatform;
+      tags?: string[];
+    };
+
+// Color class per platform for the badge
+const PLATFORM_COLORS: Record<string, string> = {
+  substack: highlightColors.orange,
+  medium: highlightColors.green,
+  x: highlightColors.blue,
+  dev: highlightColors.purple,
+  hashnode: highlightColors.purple,
+  linkedin: highlightColors.blue,
+  notion: highlightColors.yellow,
+  personal: "",
+};
+
+const PLATFORM_LABELS: Record<string, string> = {
+  substack: "Substack",
+  medium: "Medium",
+  x: "X",
+  dev: "Dev.to",
+  hashnode: "Hashnode",
+  linkedin: "LinkedIn",
+  notion: "Notion",
+  personal: "Blog",
+};
+
+// Social writing platforms to show in the "Find me on" row
+const socialLinks = [
+  { label: "Substack", url: profile.social.substack },
+  { label: "Medium", url: profile.social.medium },
+  // { label: "X", url: profile.social.x },
+].filter((s): s is { label: string; url: string } => Boolean(s.url));
 
 export default function BlogPage() {
   const { resolvedTheme, setTheme } = useTheme();
@@ -34,42 +86,65 @@ export default function BlogPage() {
 
   useEffect(() => {
     setMounted(true);
-    // Fetch internal posts
     fetch("/api/blog")
       .then((res) => res.json())
       .then((data) => setInternalPosts(data.posts || []))
       .catch(() => setInternalPosts([]));
   }, []);
 
-  // Collect all unique tags from both internal and external posts
+  // All unique tags across all posts
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
-    internalPosts.forEach((post) => {
-      post.frontmatter.tags?.forEach((tag) => tagSet.add(tag));
-    });
-    blogPosts.forEach((post) => {
-      post.tags?.forEach((tag) => tagSet.add(tag));
-    });
+    internalPosts.forEach((p) => p.frontmatter.tags?.forEach((t) => tagSet.add(t)));
+    blogPosts.forEach((p) => p.tags?.forEach((t) => tagSet.add(t)));
     return Array.from(tagSet).sort();
   }, [internalPosts]);
 
-  // Filter posts based on selected tags
-  const filteredInternalPosts = useMemo(() => {
+  // Filtered internal posts
+  const filteredInternal = useMemo(() => {
     if (selectedTags.length === 0) return internalPosts;
-    return internalPosts.filter((post) =>
-      selectedTags.some((tag) => post.frontmatter.tags?.includes(tag))
+    return internalPosts.filter((p) =>
+      selectedTags.some((t) => p.frontmatter.tags?.includes(t))
     );
   }, [internalPosts, selectedTags]);
 
-  const filteredExternalPosts = useMemo(() => {
+  // Filtered external posts
+  const filteredExternal = useMemo(() => {
     const sorted = [...blogPosts].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
     if (selectedTags.length === 0) return sorted;
-    return sorted.filter((post) =>
-      selectedTags.some((tag) => post.tags?.includes(tag))
+    return sorted.filter((p) =>
+      selectedTags.some((t) => p.tags?.includes(t))
     );
   }, [selectedTags]);
+
+  // Single unified chronological list
+  const allPosts = useMemo((): UnifiedPost[] => {
+    const internal: UnifiedPost[] = filteredInternal.map((p) => ({
+      kind: "internal",
+      slug: p.slug,
+      title: p.frontmatter.title,
+      description: p.frontmatter.description,
+      date: p.frontmatter.date,
+      readingTime: p.frontmatter.readingTime,
+      tags: p.frontmatter.tags,
+      substackUrl: p.frontmatter.substackUrl,
+      externalUrls: p.frontmatter.externalUrls,
+    }));
+    const external: UnifiedPost[] = filteredExternal.map((p) => ({
+      kind: "external",
+      url: p.url,
+      title: p.title,
+      description: p.description,
+      date: p.date,
+      platform: p.platform,
+      tags: p.tags,
+    }));
+    return [...internal, ...external].sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+  }, [filteredInternal, filteredExternal]);
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -77,17 +152,16 @@ export default function BlogPage() {
     );
   };
 
-  const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString("en-US", {
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
     });
-  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header - Matching main page */}
+      {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 glass border-b border-glass-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-12 flex items-center justify-end">
           <div className="flex items-center gap-3 sm:gap-4">
@@ -106,7 +180,9 @@ export default function BlogPage() {
             ))}
             {mounted && (
               <button
-                onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+                onClick={() =>
+                  setTheme(resolvedTheme === "dark" ? "light" : "dark")
+                }
                 className="p-1.5 rounded-full hover:bg-background-secondary transition-colors"
                 aria-label="Toggle theme"
               >
@@ -121,35 +197,58 @@ export default function BlogPage() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="flex-1 px-4 sm:px-6 pt-16 sm:pt-20 pb-6 sm:pb-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Page Title - Full Width Header */}
-          <div className="mb-4 sm:mb-6">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight leading-tight">
+      <main className="flex-1 px-4 sm:px-6 pt-16 sm:pt-20 pb-10 sm:pb-14">
+        <div className="max-w-3xl mx-auto">
+
+          {/* Page title */}
+          <div className="mb-5 sm:mb-7">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight leading-tight">
               Writings
             </h1>
-            <p className="text-base sm:text-lg text-foreground-muted mt-1.5 sm:mt-2">
-              Thoughts on{" "}
-              <span className={highlightColors.green}>AI</span>
+            <p className="text-sm sm:text-base text-foreground-muted mt-1.5 leading-relaxed">
+              On{" "}
+              <span className={highlightColors.green}>ML &amp; AI</span>
               {", "}
-              <span className={highlightColors.blue}>software engineering</span>
-              {", and "}
-              <span className={highlightColors.orange}>building things</span>
+              <span className={highlightColors.blue}>engineering</span>
+              {", "}
+              <span className={highlightColors.purple}>agentic systems</span>
+              {" and "}
+              <span className={highlightColors.orange}>random thoughts</span>
             </p>
           </div>
 
-          {/* Tag Filter Pills */}
+          {/* Find me on: platform links */}
+          {socialLinks.length > 0 && (
+            <div className="flex items-center gap-2 flex-wrap mb-6 sm:mb-8">
+              <span className="text-[0.6375rem] font-sans text-foreground-muted uppercase tracking-widest">
+                Find me on
+              </span>
+              {socialLinks.map(({ label, url }) => (
+                <a
+                  key={url}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="blog-platform-link"
+                >
+                  {label}
+                  <ExternalLink className="w-2.5 h-2.5" />
+                </a>
+              ))}
+            </div>
+          )}
+
+          {/* Tag filter pills */}
           {allTags.length > 0 && (
-            <div className="mb-6 sm:mb-8">
+            <div className="mb-7 sm:mb-9">
               <div className="flex flex-wrap gap-2">
                 {allTags.map((tag) => (
                   <button
                     key={tag}
                     onClick={() => toggleTag(tag)}
-                    className={`text-xs sm:text-sm px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border transition-all ${
+                    className={`text-[0.6875rem] sm:text-xs px-3 py-1.5 rounded-full border font-sans tracking-wide transition-all ${
                       selectedTags.includes(tag)
-                        ? "bg-foreground text-background border-foreground"
+                        ? "bg-foreground text-background border-foreground shadow-sm"
                         : "bg-transparent text-foreground-muted border-border hover:border-foreground-muted hover:text-foreground"
                     }`}
                   >
@@ -159,177 +258,158 @@ export default function BlogPage() {
                 {selectedTags.length > 0 && (
                   <button
                     onClick={() => setSelectedTags([])}
-                    className="text-xs sm:text-sm px-2.5 sm:px-3 py-1 sm:py-1.5 text-foreground-muted hover:text-foreground transition-colors underline"
+                    className="text-[0.6875rem] sm:text-xs px-2 py-1.5 text-foreground-muted hover:text-foreground transition-colors underline font-sans"
                   >
-                    Clear all
+                    Clear
                   </button>
                 )}
               </div>
             </div>
           )}
 
-          {/* Substack Subscribe Card */}
-          <div className="mb-8 sm:mb-10 p-4 sm:p-5 rounded-xl bg-background-secondary border border-border">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-lg bg-background flex items-center justify-center shrink-0 border border-border">
-                <span className="text-lg sm:text-xl font-serif italic text-foreground">AM</span>
-              </div>
-              <div className="flex-1">
-                <h3 className="font-medium text-sm sm:text-base mb-1">
-                  Subscribe to <span className={highlightColors.green}>my Substack</span> ✨
-                </h3>
-                <p className="text-xs sm:text-sm text-foreground-muted leading-relaxed mb-3">
-                  Deep dives into ml research, Agenticsystems and everything in between.
-                </p>
-                <a
-                  href={profile.social.substack}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium ${highlightColors.green} px-3 py-1.5 rounded-md hover:opacity-90 transition-opacity`}
-                >
-                  Subscribe to Newsletter
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </a>
-              </div>
-            </div>
-          </div>
+          {/* Unified post list */}
+          {allPosts.length > 0 ? (
+            <div>
+              {allPosts.map((post, i) => {
+                const isLast = i === allPosts.length - 1;
 
-          <div className="max-w-4xl space-y-8 sm:space-y-10">
-            {/* Internal Posts Section */}
-            {filteredInternalPosts.length > 0 && (
-              <section>
-                <div className="space-y-4 sm:space-y-5">
-                  {filteredInternalPosts.map((post) => (
-                    <div
-                      key={post.slug}
-                      className="group p-3 sm:p-4 -mx-3 sm:-mx-4 rounded-lg hover:bg-background-secondary transition-colors"
-                    >
-                      <div className="flex items-start justify-between gap-3 sm:gap-4">
-                        <div className="flex-1">
-                          <Link href={`/blog/${post.slug}`}>
-                            <h3 className="font-medium text-sm sm:text-base group-hover:text-foreground transition-colors flex items-center gap-1.5 sm:gap-2">
-                              <span className={highlightColors.purple}>{post.frontmatter.title}</span>
-                              <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-foreground-muted" />
-                            </h3>
-                          </Link>
-                          <p className="text-xs sm:text-sm text-foreground-muted mt-1 leading-relaxed">
-                            {post.frontmatter.description}
-                          </p>
-                          <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-2">
-                            {post.frontmatter.tags && post.frontmatter.tags.map((tag) => (
-                              <span
-                                key={tag}
-                                className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded bg-background-secondary text-foreground-muted"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                            {post.frontmatter.substackUrl && (
-                              <a
-                                href={post.frontmatter.substackUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className={`text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded flex items-center gap-1 ${highlightColors.orange}`}
-                              >
-                                Substack
-                                <ExternalLink className="w-2.5 h-2.5" />
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <span className="text-[10px] sm:text-xs text-foreground-muted">
-                            {formatDate(post.frontmatter.date)}
-                          </span>
-                          {post.frontmatter.readingTime && (
-                            <p className="text-[10px] sm:text-xs mt-1 text-foreground-muted">
-                              {post.frontmatter.readingTime} min read
+                if (post.kind === "internal") {
+                  // Collect cross-post labels for internal posts
+                  const crossPosts: string[] = [];
+                  if (post.substackUrl) crossPosts.push("Substack");
+                  post.externalUrls?.forEach(({ platform }) => {
+                    crossPosts.push(PLATFORM_LABELS[platform] ?? platform);
+                  });
+
+                  return (
+                    <div key={post.slug}>
+                      <div className="py-5 sm:py-6 group">
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="flex-1 min-w-0">
+                            <Link href={`/blog/${post.slug}`}>
+                              <h2 className="text-base sm:text-lg font-semibold leading-snug group-hover:text-foreground transition-colors flex items-center gap-1.5 flex-wrap">
+                                {post.title}
+                                <ArrowRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
+                              </h2>
+                            </Link>
+                            <p className="text-sm text-foreground-muted mt-1 leading-relaxed">
+                              {post.description}
                             </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {/* External Posts Section */}
-            {filteredExternalPosts.length > 0 && (
-              <section>
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground mb-3 sm:mb-4 underline">
-                  External Posts
-                </h2>
-                <div className="space-y-4 sm:space-y-5">
-                  {filteredExternalPosts.map((post, index) => (
-                    <a
-                      key={index}
-                      href={post.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block group p-3 sm:p-4 -mx-3 sm:-mx-4 rounded-lg hover:bg-background-secondary transition-colors"
-                    >
-                      <div className="flex items-start justify-between gap-3 sm:gap-4">
-                        <div className="flex-1">
-                          <h3 className="font-medium text-sm sm:text-base group-hover:text-foreground transition-colors flex items-center gap-1.5 sm:gap-2">
-                            <span className={highlightColors.blue}>{post.title}</span>
-                            <ExternalLink className="w-3 h-3 sm:w-3.5 sm:h-3.5 opacity-0 group-hover:opacity-100 transition-opacity text-foreground-muted" />
-                          </h3>
-                          <p className="text-xs sm:text-sm text-foreground-muted mt-1 leading-relaxed">
-                            {post.description}
-                          </p>
-                          {post.tags && post.tags.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-2">
-                              {post.tags.map((tag) => (
-                                <span
+                            {/* Tags + cross-post badges */}
+                            <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                              {post.tags?.map((tag) => (
+                                <button
                                   key={tag}
-                                  className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded bg-background-secondary text-foreground-muted"
+                                  onClick={() => toggleTag(tag)}
+                                  className="text-[0.625rem] px-2 py-0.5 rounded-full border border-border text-foreground-muted font-sans tracking-wide hover:border-foreground-muted transition-colors"
                                 >
                                   {tag}
+                                </button>
+                              ))}
+                              {crossPosts.map((label) => (
+                                <span
+                                  key={label}
+                                  className={`text-[0.625rem] px-2 py-0.5 rounded-full font-sans tracking-wide ${PLATFORM_COLORS["substack"] || ""}`}
+                                >
+                                  {label}
                                 </span>
                               ))}
                             </div>
-                          )}
-                        </div>
-                        <div className="text-right shrink-0">
-                          <span className="text-[10px] sm:text-xs text-foreground-muted">
-                            {formatDate(post.date)}
-                          </span>
-                          <p className="text-[10px] sm:text-xs mt-1">
-                            <span className={highlightColors.orange}>
-                              {platformLabels[post.platform]}
+                          </div>
+                          {/* Date + reading time */}
+                          <div className="text-right shrink-0 pt-0.5">
+                            <span className="text-xs text-foreground-muted font-sans">
+                              {formatDate(post.date)}
                             </span>
-                          </p>
+                            {post.readingTime && (
+                              <p className="text-[0.6875rem] text-foreground-muted mt-0.5 font-sans">
+                                {post.readingTime} min
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </a>
-                  ))}
-                </div>
-              </section>
-            )}
+                      {!isLast && (
+                        <div className="border-b border-dashed border-border" />
+                      )}
+                    </div>
+                  );
+                }
 
-            {/* Empty state */}
-            {filteredInternalPosts.length === 0 && filteredExternalPosts.length === 0 && (
-              <div className="py-12 sm:py-16">
-                {selectedTags.length > 0 ? (
-                  <>
-                    <p className="text-lg sm:text-xl text-foreground-muted mb-2">No posts found</p>
-                    <p className="text-xs sm:text-sm text-foreground-muted max-w-md">
-                      No posts match the selected tags. Try clearing the filters.
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <p className="text-lg sm:text-xl text-foreground-muted mb-2">Coming Soon</p>
-                    <p className="text-xs sm:text-sm text-foreground-muted max-w-md">
-                      I&apos;m working on some articles about AI, software engineering, and
-                      my experiences. Check back soon!
-                    </p>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
+                // External post
+                const badgeColor = PLATFORM_COLORS[post.platform] || "";
+
+                return (
+                  <div key={post.url}>
+                    <div className="py-5 sm:py-6 group">
+                      <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                          <a
+                            href={post.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <h2 className="text-base sm:text-lg font-semibold leading-snug group-hover:text-foreground transition-colors flex items-center gap-1.5 flex-wrap">
+                              {post.title}
+                              <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
+                            </h2>
+                          </a>
+                          <p className="text-sm text-foreground-muted mt-1 leading-relaxed">
+                            {post.description}
+                          </p>
+                          <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
+                            {post.tags?.map((tag) => (
+                              <button
+                                key={tag}
+                                onClick={() => toggleTag(tag)}
+                                className="text-[0.625rem] px-2 py-0.5 rounded-full border border-border text-foreground-muted font-sans tracking-wide hover:border-foreground-muted transition-colors"
+                              >
+                                {tag}
+                              </button>
+                            ))}
+                            {/* Platform badge */}
+                            <span
+                              className={`text-[0.625rem] px-2 py-0.5 rounded-full font-sans tracking-wide ${badgeColor}`}
+                            >
+                              {PLATFORM_LABELS[post.platform] ?? post.platform}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0 pt-0.5">
+                          <span className="text-xs text-foreground-muted font-sans">
+                            {formatDate(post.date)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    {!isLast && (
+                      <div className="border-b border-dashed border-border" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="py-14">
+              {selectedTags.length > 0 ? (
+                <>
+                  <p className="text-base text-foreground-muted mb-1">
+                    No posts match those tags.
+                  </p>
+                  <button
+                    onClick={() => setSelectedTags([])}
+                    className="text-sm text-foreground-muted underline"
+                  >
+                    Clear filters
+                  </button>
+                </>
+              ) : (
+                <p className="text-base text-foreground-muted">
+                  Posts coming soon.
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </main>
     </div>

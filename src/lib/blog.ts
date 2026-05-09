@@ -16,7 +16,9 @@ export interface BlogFrontmatter {
   coverImage?: string;
   coverCaption?: string;
   draft?: boolean;
-  substackUrl?: string; // Link to the post on Substack
+  substackUrl?: string;
+  // For cross-posted content, list all platforms where this post appears
+  externalUrls?: { platform: string; url: string }[];
 }
 
 export interface BlogPost {

@@ -112,7 +112,9 @@ export default function Home() {
                 </a>
                 <span className="text-foreground-muted text-sm">•</span>
                 <a
-                  href={`mailto:${profile.email}`}
+                  href={profile.resume}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-sm text-foreground-muted hover:text-foreground underline transition-colors"
                 >
                   Resume

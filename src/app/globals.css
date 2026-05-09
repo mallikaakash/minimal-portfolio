@@ -3,9 +3,9 @@
 /* Light theme (default) */
 :root {
   --background: #faf9f7;
-  --background-secondary: #f5f4f0;
+  --background-secondary: #eae7e0;
   --foreground: #1a1a1a;
-  --foreground-muted: #6b6b6b;
+  --foreground-muted: #4a4a4a;
   --border: rgba(0, 0, 0, 0.08);
   
   /* Colorful highlights - Sui Overflow inspired */
@@ -221,24 +221,24 @@ a {
   object-fit: contain;
 }
 
-/* Blog header styling - elegant centered */
+/* Blog header styling - left-aligned, editorial */
 .blog-header {
-  text-align: center;
-  margin-bottom: 3rem;
+  text-align: left;
+  margin-bottom: 1.75rem;
 }
 
 .blog-header h1 {
-  font-size: 2.75rem;
-  font-weight: 400;
-  font-style: italic;
-  line-height: 1.2;
-  margin-bottom: 1.25rem;
-  letter-spacing: -0.01em;
+  font-size: 2rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1.15;
+  margin-bottom: 0.875rem;
+  letter-spacing: -0.02em;
 }
 
 @media (min-width: 640px) {
   .blog-header h1 {
-    font-size: 3.5rem;
+    font-size: 2.625rem;
   }
 }
 
@@ -265,13 +265,97 @@ a {
 
 /* Meta info */
 .blog-meta {
-  font-size: 0.875rem;
+  font-size: 0.725rem;
   color: var(--foreground-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.07em;
   display: flex;
+  align-items: center;
   gap: 0.5rem;
-  justify-content: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  font-family: var(--font-sans);
+  margin-bottom: 0.75rem;
+}
+
+.blog-meta .meta-sep {
+  opacity: 0.3;
+}
+
+/* Tags row at top of post header */
+.blog-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1.125rem;
+}
+
+.blog-tag-pill {
+  font-size: 0.6375rem;
+  font-family: var(--font-sans);
+  padding: 0.175rem 0.575rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  color: var(--foreground-muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.dark .blog-tag-pill {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Dotted separator between post header and prose */
+.blog-dotted-separator {
+  border: none;
+  border-top: 1px dotted var(--foreground-muted);
+  opacity: 0.3;
+  margin: 1.5rem 0 2.25rem;
+}
+
+/* "Also on:" external platform links in post header */
+.blog-external-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.also-on-label {
+  font-size: 0.6375rem;
+  font-family: var(--font-sans);
+  color: var(--foreground-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.blog-platform-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.6875rem;
+  font-family: var(--font-sans);
+  color: var(--foreground-muted);
+  text-decoration: none !important;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  transition: color 0.15s ease, border-color 0.15s ease;
+  letter-spacing: 0.03em;
+}
+
+.dark .blog-platform-link {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.blog-platform-link:hover {
+  color: var(--foreground);
+  border-color: rgba(0, 0, 0, 0.35);
+  background: none !important;
+}
+
+.dark .blog-platform-link:hover {
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 /* Main content prose styling */
@@ -316,28 +400,42 @@ a {
 }
 
 .blog-prose h2 {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin-top: 2.5em;
+  font-family: var(--font-sans);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 3em;
   margin-bottom: 0.75em;
   text-align: left;
+  padding-left: 0.8rem;
+  border-left: 3px solid var(--foreground-muted);
 }
 
 .blog-prose h3 {
-  font-size: 1.375rem;
+  font-family: var(--font-sans);
+  font-size: 1.15rem;
   font-weight: 600;
-  margin-top: 2em;
+  margin-top: 2.25em;
   margin-bottom: 0.5em;
   text-align: left;
+  padding-bottom: 0.3rem;
+  border-bottom: 1px dotted rgba(0, 0, 0, 0.2);
+}
+
+.dark .blog-prose h3 {
+  border-bottom-color: rgba(255, 255, 255, 0.12);
 }
 
 .blog-prose h4 {
-  font-size: 1.125rem;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
   font-weight: 600;
-  font-style: italic;
-  margin-top: 1.5em;
+  font-style: normal;
+  color: var(--foreground-muted);
+  margin-top: 1.75em;
   margin-bottom: 0.5em;
   text-align: left;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .blog-prose ul,
@@ -382,16 +480,13 @@ a {
 }
 
 .sidenote-ref {
-  font-size: 0.75em;
+  font-size: 0.7em;
   vertical-align: super;
   line-height: 0;
-  color: var(--highlight-blue);
+  color: var(--foreground-muted);
   cursor: pointer;
-  font-weight: 600;
-}
-
-.dark .sidenote-ref {
-  color: #a5d8ff;
+  font-weight: 700;
+  font-family: var(--font-sans);
 }
 
 .sidenote {
@@ -403,24 +498,28 @@ a {
 }
 
 .sidenote-number {
-  font-weight: 600;
-  color: var(--highlight-blue);
+  font-weight: 700;
+  font-family: var(--font-sans);
+  font-size: 0.85em;
+  color: var(--foreground-muted);
   margin-right: 0.25em;
-}
-
-.dark .sidenote-number {
-  color: #a5d8ff;
 }
 
 /* Mobile/Tablet sidenotes - inline collapsible blocks */
 @media (max-width: 1279px) {
   .sidenote {
     display: block;
-    margin: 1em 0;
-    padding: 0.875em 1em;
+    margin: 0.625em 0;
+    padding: 0.625em 0.875em;
     background: var(--background-secondary);
     border-radius: 6px;
-    border-left: 3px solid var(--highlight-blue);
+    border: 1px solid var(--border);
+    border-top: 2px solid rgba(0, 0, 0, 0.14);
+    font-style: italic;
+  }
+
+  .dark .sidenote {
+    border-top-color: rgba(255, 255, 255, 0.12);
   }
   
   .sidenote.collapsed {
@@ -443,18 +542,28 @@ a {
   .sidenote.sidenote-right {
     float: right;
     margin-right: -220px;
-    border-left: 2px solid var(--border);
+    border-left: 1px solid rgba(0, 0, 0, 0.14);
     text-align: left;
+    font-style: italic;
+  }
+
+  .dark .sidenote.sidenote-right {
+    border-left-color: rgba(255, 255, 255, 0.1);
   }
   
   /* Left side sidenotes (even numbers: 2, 4, 6...) */
   .sidenote.sidenote-left {
     float: left;
     margin-left: -220px;
-    border-right: 2px solid var(--border);
+    border-right: 1px solid rgba(0, 0, 0, 0.14);
     text-align: right;
     padding-left: 0;
     padding-right: 0.75rem;
+    font-style: italic;
+  }
+
+  .dark .sidenote.sidenote-left {
+    border-right-color: rgba(255, 255, 255, 0.1);
   }
   
   .sidenote.sidenote-left .sidenote-number {
