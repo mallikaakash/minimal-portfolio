@@ -23,23 +23,23 @@
 
 /* Dark theme */
 .dark {
-  --background: #0a0a0a;
-  --background-secondary: #141414;
-  --foreground: #f5f5f5;
-  --foreground-muted: #b8b8b8;
-  --border: rgba(255, 255, 255, 0.08);
-  
-  /* Colorful highlights - Dark mode */
-  --highlight-green: #2d5a27;
-  --highlight-orange: #8b5a2b;
-  --highlight-blue: #1e4976;
-  --highlight-pink: #6b2d2d;
-  --highlight-yellow: #6b5a1e;
-  --highlight-purple: #4a3a6b;
-  
+  --background: #0d0d0b;
+  --background-secondary: #181816;
+  --foreground: #f0f0ee;
+  --foreground-muted: #a0a09e;
+  --border: rgba(255, 255, 255, 0.07);
+
+  /* Dark mode: keep vars for internal use, actual highlight visuals overridden below */
+  --highlight-green: rgba(74, 222, 128, 0.12);
+  --highlight-orange: rgba(251, 146, 60, 0.12);
+  --highlight-blue: rgba(96, 165, 250, 0.12);
+  --highlight-pink: rgba(244, 114, 182, 0.12);
+  --highlight-yellow: rgba(250, 204, 21, 0.1);
+  --highlight-purple: rgba(192, 132, 252, 0.12);
+
   /* Glassmorphism - Dark */
-  --glass-bg: rgba(20, 20, 20, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.05);
+  --glass-bg: rgba(18, 18, 16, 0.85);
+  --glass-border: rgba(255, 255, 255, 0.06);
 }
 
 @theme inline {
@@ -113,15 +113,13 @@ body {
   border-radius: 4px;
 }
 
-/* Dark mode - white text on highlights for contrast */
-.dark .highlight-green,
-.dark .highlight-orange,
-.dark .highlight-blue,
-.dark .highlight-pink,
-.dark .highlight-yellow,
-.dark .highlight-purple {
-  color: #ffffff;
-}
+/* Dark mode - vibrant colored text with subtle glow, not dark color blobs */
+.dark .highlight-green  { background: rgba(74, 222, 128, 0.1);  color: #4ade80; }
+.dark .highlight-orange { background: rgba(251, 146, 60, 0.1);  color: #fb923c; }
+.dark .highlight-blue   { background: rgba(96, 165, 250, 0.1);  color: #60a5fa; }
+.dark .highlight-pink   { background: rgba(244, 114, 182, 0.1); color: #f472b6; }
+.dark .highlight-yellow { background: rgba(250, 204, 21, 0.08); color: #facc15; }
+.dark .highlight-purple { background: rgba(192, 132, 252, 0.1); color: #c084fc; }
 
 /* Glassmorphism utilities */
 .glass {
@@ -469,8 +467,13 @@ a {
   border-radius: 2px;
 }
 
+.dark .blog-prose a {
+  text-decoration-color: #60a5fa;
+}
+
 .dark .blog-prose a:hover {
-  color: #ffffff;
+  background: rgba(96, 165, 250, 0.1);
+  color: #60a5fa;
 }
 
 /* Sidenote styling */

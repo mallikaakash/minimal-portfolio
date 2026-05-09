@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin, Mail, Sun, Moon } from "lucide-react";
+import { Github, Linkedin, Mail, Sun, Moon, Twitter, GraduationCap } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -84,7 +84,7 @@ export default function Home() {
               </div>
 
               {/* Links */}
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 flex-wrap">
                 <a
                   href={profile.social.github}
                   target="_blank"
@@ -104,13 +104,31 @@ export default function Home() {
                   <Linkedin className="w-5 h-5" />
                 </a>
                 <a
+                  href={profile.social.x}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground-muted hover:text-foreground transition-colors"
+                  aria-label="X (Twitter)"
+                >
+                  <Twitter className="w-5 h-5" />
+                </a>
+                <a
+                  href={profile.social.scholar}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-foreground-muted hover:text-foreground transition-colors"
+                  aria-label="Google Scholar"
+                >
+                  <GraduationCap className="w-5 h-5" />
+                </a>
+                <a
                   href={`mailto:${profile.email}`}
                   className="text-foreground-muted hover:text-foreground transition-colors"
                   aria-label="Email"
                 >
                   <Mail className="w-5 h-5" />
                 </a>
-                <span className="text-foreground-muted text-sm">•</span>
+                <span className="text-foreground-muted text-sm">·</span>
                 <a
                   href={profile.resume}
                   target="_blank"

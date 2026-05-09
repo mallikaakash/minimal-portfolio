@@ -23,7 +23,8 @@ export const profile = {
     linkedin: "https://linkedin.com/in/aakash-mallik-82b99423b/",
     substack: "https://aakashmallik1.substack.com/",
     medium: "https://medium.com/@aakashmallik7777",
-    // x: "https://x.com/yourhandle",
+    x: "https://x.com/malliktwts",
+    scholar: "https://scholar.google.com/citations?user=b1ZPeEcAAAAJ&hl=en",
   },
 
   // Short bio for the homepage - use {highlight} syntax for colored spans
