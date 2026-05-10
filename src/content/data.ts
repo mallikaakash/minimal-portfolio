@@ -31,8 +31,8 @@ export const profile = {
   bio: [
     "{Generalist|orange}{Software Engineer|blue} & {Researcher|green}. Currently at {Wells Fargo|blue}, working on Debt Capital Market platforms. I explore Agentic AI systems and implement them in my free time.",
     " {From research to real systems|orange} - That's my engineering way. I love to understand the underlying fundamental principles and building from bottom up. I also aim to be a {Full Stack Engineer|green} - {NO HOLD UP!!!|pink} not the MERN stack kinda guy but rather someone who understands the entire AI stack from  chip architecture to GPU programming right from distributed training of LLMs upto there distributed deployment and efficient inference (including on edge devices). This is the {Goal|pink} I try to work towards daily trying to be a bit better everyday.",
-    "Previously shipped {RAG pipelines|purple} at NeoSapien, built speech-to-text infrastructure at OnTheRecord, and won {SUI Overflow 2025|pink}.",
-    "Love exploring different stuff. {Philosophy|purple}, {Literature|orange}, {Anime|pink}, {Webtoons|green} and {Gym|yellow} take up a major chunk of my time too.",
+    "Previously shipped {Second Brain pipelines|purple} at NeoSapien, built classical ML models and speech-to-text infrastructure, and won the {SUI Overflow 2025|pink} hackathon. Connect with me on {LinkedIn|blue} or {X|green} or just drop me an email for work or collab.",
+    "I love exploring different stuff. {Philosophy|purple}, {Literature|orange}, {Anime|pink}, {Webtoons|green} and (irregularly){Gym|yellow} take up a major chunk of my time too.",
   ],
 };
 
