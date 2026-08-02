@@ -1,0 +1,72 @@
+name: Blog from issue
+
+# Turn a "New blog post" issue into a committed .mdx file.
+on:
+  issues:
+    types: [opened, edited, labeled]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  publish:
+    # Only run for the repo owner, and only for issues carrying the new-blog label.
+    if: >
+      github.event.issue.user.login == github.repository_owner &&
+      contains(github.event.issue.labels.*.name, 'new-blog')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Generate post from issue
+        id: gen
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: node scripts/blog-from-issue.mjs
+
+      - name: Commit & push
+        id: commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${{ steps.gen.outputs.file }}"
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "blog: ${{ steps.gen.outputs.title }} (from #${{ github.event.issue.number }})"
+            git push
+            echo "committed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment & close issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE: ${{ github.event.issue.number }}
+          FILE: ${{ steps.gen.outputs.file }}
+          SLUG: ${{ steps.gen.outputs.slug }}
+          DRAFT: ${{ steps.gen.outputs.draft }}
+          COMMITTED: ${{ steps.commit.outputs.committed }}
+        run: |
+          if [ "$COMMITTED" = "true" ]; then
+            if [ "$DRAFT" = "true" ]; then
+              STATUS="Saved as a **draft** at \`$FILE\` — it stays hidden on the live site until you set Draft to \"No\" (edit the issue, or edit the file)."
+            else
+              STATUS="Published to \`$FILE\`. It'll be live at \`/blog/$SLUG\` once the site redeploys. 🚀"
+            fi
+            gh issue comment "$ISSUE" --body "✅ $STATUS"
+            gh issue close "$ISSUE" --reason completed
+          else
+            gh issue comment "$ISSUE" --body "ℹ️ Re-ran but the generated post was identical — nothing new to commit."
+          fi

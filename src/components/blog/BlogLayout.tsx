@@ -1,11 +1,13 @@
 import { ReactNode } from "react";
 import Image from "next/image";
 import { ExternalLink } from "lucide-react";
-import { BlogFrontmatter, formatBlogDate } from "@/lib/blog";
+import { BlogFrontmatter, formatBlogDate, TocItem } from "@/lib/blog";
+import { BlogToc } from "./BlogToc";
 
 interface BlogLayoutProps {
   frontmatter: BlogFrontmatter;
   children: ReactNode;
+  toc?: TocItem[];
 }
 
 const PLATFORM_LABELS: Record<string, string> = {
@@ -18,7 +20,7 @@ const PLATFORM_LABELS: Record<string, string> = {
   notion: "Notion",
 };
 
-export function BlogLayout({ frontmatter, children }: BlogLayoutProps) {
+export function BlogLayout({ frontmatter, children, toc = [] }: BlogLayoutProps) {
   const {
     title,
     date,
@@ -41,7 +43,11 @@ export function BlogLayout({ frontmatter, children }: BlogLayoutProps) {
   }
 
   return (
-    <article className="blog-article">
+    <div className="blog-shell">
+      {/* Table of contents — sticky left rail on desktop, collapsible on mobile */}
+      <BlogToc toc={toc} />
+
+      <article className="blog-article">
       {/* Tags at the very top */}
       {tags && tags.length > 0 && (
         <div className="blog-tags">
@@ -114,7 +120,8 @@ export function BlogLayout({ frontmatter, children }: BlogLayoutProps) {
 
       {/* Main prose content */}
       <div className="blog-prose">{children}</div>
-    </article>
+      </article>
+    </div>
   );
 }
 

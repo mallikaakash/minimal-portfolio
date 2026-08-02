@@ -6,6 +6,7 @@
   --background-secondary: #eae7e0;
   --foreground: #1a1a1a;
   --foreground-muted: #4a4a4a;
+  --foreground-body: #2e2d2b; /* body copy — a touch softer than heading, still high contrast */
   --border: rgba(0, 0, 0, 0.08);
   
   /* Colorful highlights - Sui Overflow inspired */
@@ -26,7 +27,8 @@
   --background: #0d0d0b;
   --background-secondary: #181816;
   --foreground: #f0f0ee;
-  --foreground-muted: #a0a09e;
+  --foreground-muted: #adadaa; /* raised from #a0a09e for legibility on near-black */
+  --foreground-body: #dcdcd9;  /* body copy — bright enough to read comfortably */
   --border: rgba(255, 255, 255, 0.07);
 
   /* Dark mode: keep vars for internal use, actual highlight visuals overridden below */
@@ -47,6 +49,7 @@
   --color-background-secondary: var(--background-secondary);
   --color-foreground: var(--foreground);
   --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-body: var(--foreground-body);
   --color-border: var(--border);
   --color-glass-bg: var(--glass-bg);
   --color-glass-border: var(--glass-border);
@@ -155,6 +158,96 @@ body {
 a {
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
+}
+
+/* =============================================================================
+   MICRO-INTERACTIONS
+   ============================================================================= */
+
+/* Staggered rise-in for page sections */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise-in {
+  opacity: 0;
+  animation: rise-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* Nav links: underline sweep from left on hover / active */
+.nav-link {
+  position: relative;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
+.nav-link.active::after {
+  transform: scaleX(1);
+  opacity: 0.45;
+}
+
+/* Theme toggle: spin the icon on hover */
+.theme-toggle svg {
+  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.theme-toggle:hover svg {
+  transform: rotate(90deg) scale(1.1);
+}
+
+/* Custom bullet marker — a small muted dot */
+.dot-bullets li {
+  position: relative;
+  padding-left: 1.15rem;
+}
+
+.dot-bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.72em;
+  width: 5px;
+  height: 5px;
+  border-radius: 9999px;
+  background: var(--foreground-muted);
+  opacity: 0.55;
+}
+
+/* Respect users who prefer less motion */
+@media (prefers-reduced-motion: reduce) {
+  .rise-in {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+  .theme-toggle:hover svg {
+    transform: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* =============================================================================
@@ -541,9 +634,10 @@ a {
     clear: both;
   }
   
-  /* Right side sidenotes (odd numbers: 1, 3, 5...) */
+  /* All sidenotes float into the right margin */
   .sidenote.sidenote-right {
     float: right;
+    clear: right;
     margin-right: -220px;
     border-left: 1px solid rgba(0, 0, 0, 0.14);
     text-align: left;
@@ -553,27 +647,7 @@ a {
   .dark .sidenote.sidenote-right {
     border-left-color: rgba(255, 255, 255, 0.1);
   }
-  
-  /* Left side sidenotes (even numbers: 2, 4, 6...) */
-  .sidenote.sidenote-left {
-    float: left;
-    margin-left: -220px;
-    border-right: 1px solid rgba(0, 0, 0, 0.14);
-    text-align: right;
-    padding-left: 0;
-    padding-right: 0.75rem;
-    font-style: italic;
-  }
 
-  .dark .sidenote.sidenote-left {
-    border-right-color: rgba(255, 255, 255, 0.1);
-  }
-  
-  .sidenote.sidenote-left .sidenote-number {
-    margin-right: 0;
-    margin-left: 0.25em;
-  }
-  
   .sidenote-ref {
     cursor: default;
   }
@@ -584,13 +658,9 @@ a {
   .sidenote {
     width: 240px;
   }
-  
+
   .sidenote.sidenote-right {
     margin-right: -260px;
-  }
-  
-  .sidenote.sidenote-left {
-    margin-left: -260px;
   }
 }
 
@@ -726,4 +796,126 @@ a {
   border-left: 2px solid var(--highlight-blue);
   margin-left: -1.25em;
   padding-left: calc(1.25em - 2px);
+}
+
+/* =============================================================================
+   TABLE OF CONTENTS
+   ============================================================================= */
+
+/* Keep linked headings clear of the fixed header when jumped to */
+.blog-prose h2,
+.blog-prose h3 {
+  scroll-margin-top: 5rem;
+}
+
+/* The TOC only appears as a sticky side rail on wide screens.
+   On smaller screens it would stack at the top of the post, which looks
+   cramped — so it's hidden entirely below the desktop breakpoint. */
+.blog-toc {
+  display: none;
+  font-family: var(--font-sans);
+}
+
+.blog-toc-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.blog-toc-item a {
+  display: block;
+  padding: 0.22rem 0;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--foreground-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.blog-toc-item.depth-3 a {
+  padding-left: 0.9rem;
+  font-size: 0.78rem;
+}
+
+.blog-toc-item a:hover {
+  color: var(--foreground);
+}
+
+.blog-toc-item.active > a {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+/* --- Desktop: TOC becomes a sticky left rail next to the article --- */
+@media (min-width: 1280px) {
+  /* The shell lays out [ TOC | article ] as a group, biased left of centre
+     so the right margin stays free for sidenotes. */
+  .blog-shell {
+    display: grid;
+    grid-template-columns: 210px minmax(0, 680px);
+    column-gap: 3rem;
+    align-items: start;
+    width: max-content;
+    max-width: 100%;
+    margin-left: max(2.5rem, calc(50vw - 600px));
+  }
+
+  /* Article fills its grid column (drop the standalone centering/padding) */
+  .blog-shell .blog-article {
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+  }
+
+  .blog-toc {
+    display: block;
+    position: sticky;
+    top: 6rem;
+    align-self: start;
+    width: 210px;
+    max-height: calc(100vh - 8rem);
+    overflow-y: auto;
+    margin: 0;
+    padding: 0 0 0 1rem;
+    border: none;
+    border-left: 1px solid var(--border);
+    border-radius: 0;
+    background: none;
+  }
+
+  .blog-toc-summary {
+    display: none;
+  }
+
+  .blog-toc-title {
+    display: block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--foreground-muted);
+    margin: 0 0 0.7rem;
+  }
+
+  /* An accent bar on the active item, aligned to the left border */
+  .blog-toc-item {
+    position: relative;
+  }
+
+  .blog-toc-item.active::before {
+    content: "";
+    position: absolute;
+    left: -1rem;
+    top: 0.3rem;
+    bottom: 0.3rem;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--foreground);
+  }
+}
+
+@media (min-width: 1536px) {
+  .blog-shell {
+    grid-template-columns: 220px minmax(0, 720px);
+    margin-left: max(2.5rem, calc(50vw - 640px));
+  }
 }

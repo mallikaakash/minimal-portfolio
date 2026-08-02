@@ -79,12 +79,17 @@ export const profile = {
     scholar: "",  // leave empty to hide
   },
 
-  bio: [
-    "First paragraph of your bio.",
-    "Second paragraph — supports {highlight syntax|orange}.",
-  ],
+  about: {
+    lead: "A punchy one-line intro — supports {highlight syntax|blue}.",
+    points: [
+      "A scannable bullet about what you do.",
+      "Another bullet — {highlights|orange} work here too.",
+    ],
+  },
 };
 ```
+
+The homepage renders `about.lead` as an intro line, then `about.points` as bullets.
 
 Place your resume PDF in the `/public` folder and set `resume` to `"/YourFile.pdf"`.
 
@@ -120,8 +125,11 @@ export const experience: ExperienceItem[] = [
     role: "Software Engineer",
     period: "Jan 2024 – Present",
     color: "blue",       // accent color for this entry
-    description:
-      "Built {distributed systems|blue} serving 10M+ users. Reduced latency by {40%|orange}.",
+    description: "A short lead line for the role.",   // rendered first
+    points: [            // rendered as bullets below the lead
+      "Built {distributed systems|blue} serving 10M+ users.",
+      "Reduced latency by {40%|orange}.",
+    ],
   },
 ];
 ```
@@ -214,6 +222,21 @@ import { Sidenote, Figure, Highlight } from "@/components/blog";
 
 <Highlight color="blue">Callout text here</Highlight>
 ```
+
+### Publish from a GitHub issue (no local setup)
+
+For a fast, low-friction path — publish straight from a GitHub issue, even on mobile.
+
+1. Open a new issue and pick the **"📝 New blog post"** template.
+2. Fill in title, description, tags, and the post body (Markdown/MDX). Optionally add cross-post links and a draft flag.
+3. Submit. The **`Blog from issue`** GitHub Action ([`.github/workflows/blog-from-issue.yml`](.github/workflows/blog-from-issue.yml)) parses the issue, generates `src/content/blogs/<slug>.mdx`, commits it to `main`, then comments and closes the issue.
+4. Your host (Vercel etc.) redeploys on the new commit — the post goes live.
+
+Notes:
+- Only the **repo owner** can trigger publishing (the workflow checks `issue.user == repository_owner`), so random issues can't create posts.
+- The slug and date are derived automatically (date = day of publish). Editing the issue re-generates the file.
+- Drafts are created but hidden from the live site until you flip Draft to "No".
+- Needs a repo where the Action can push to `main` (no branch protection blocking it). The generator lives at [`scripts/blog-from-issue.mjs`](scripts/blog-from-issue.mjs).
 
 ### External blog links
 

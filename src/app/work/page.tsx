@@ -32,9 +32,9 @@ export default function WorkPage() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm transition-colors ${
+                className={`nav-link text-sm transition-colors ${
                   item.href === "/work"
-                    ? "text-foreground font-medium"
+                    ? "text-foreground font-medium active"
                     : "text-foreground-muted hover:text-foreground"
                 }`}
               >
@@ -44,7 +44,7 @@ export default function WorkPage() {
             {mounted && (
               <button
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                className="p-1.5 rounded-full hover:bg-background-secondary transition-colors"
+                className="theme-toggle p-1.5 rounded-full hover:bg-background-secondary transition-colors"
                 aria-label="Toggle theme"
               >
                 {resolvedTheme === "dark" ? (
@@ -112,7 +112,7 @@ export default function WorkPage() {
                     </div>
 
                     {/* Description */}
-                    <p className="text-xs sm:text-sm text-foreground-muted leading-relaxed">
+                    <p className="text-xs sm:text-sm text-foreground-body leading-relaxed">
                       {project.description}
                     </p>
 
@@ -183,7 +183,7 @@ export default function WorkPage() {
                       <h3 className="font-medium text-sm sm:text-base">
                         <span className={highlightColors[item.color]}>{item.title}</span>
                       </h3>
-                      <p className="text-xs sm:text-sm text-foreground-muted mt-1 leading-relaxed">
+                      <p className="text-xs sm:text-sm text-foreground-body mt-1 leading-relaxed">
                         {item.description}
                       </p>
                     </div>

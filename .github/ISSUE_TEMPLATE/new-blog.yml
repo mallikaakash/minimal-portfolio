@@ -1,0 +1,77 @@
+name: "📝 New blog post"
+description: "Publish a new post to the site. Filling this in creates the .mdx file and commits it automatically."
+title: "[blog] "
+labels: ["new-blog"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Fill this in and submit — a GitHub Action turns it into a post under `src/content/blogs/`,
+        commits it to `main`, and (once your host redeploys) it goes live. Only the repo owner can trigger publishing.
+
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: The post title. Also becomes the URL slug.
+      placeholder: "Why Golang Has No Class"
+    validations:
+      required: true
+
+  - type: input
+    id: description
+    attributes:
+      label: Short description
+      description: One-line summary shown in the writings list.
+      placeholder: "Go ditched classes — and it's more object-oriented than you think."
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags (comma-separated)
+      description: Optional. Used for filtering on the writings page.
+      placeholder: "Golang, Software Engineering, OOP"
+    validations:
+      required: false
+
+  - type: textarea
+    id: body
+    attributes:
+      label: Body (Markdown / MDX)
+      description: |
+        The full post. Plain Markdown works. You can also use the custom components:
+        `<Hl color="blue">text</Hl>`, `<Sidenote id={1}>note</Sidenote>`, `<Figure src="/..." caption="..." />`.
+      placeholder: |
+        Your opening paragraph...
+
+        ## A section
+
+        - a point
+        - another point
+    validations:
+      required: true
+
+  - type: textarea
+    id: external
+    attributes:
+      label: Cross-post links
+      description: "Optional. One per line as `platform: url` (platforms: medium, substack, linkedin, dev, hashnode, notion, x)."
+      placeholder: |
+        medium: https://medium.com/@you/my-post
+        substack: https://you.substack.com/p/my-post
+    validations:
+      required: false
+
+  - type: dropdown
+    id: draft
+    attributes:
+      label: Draft
+      description: Drafts are created but hidden from the live site until you flip this off.
+      options:
+        - "No"
+        - "Yes"
+      default: 0
+    validations:
+      required: true

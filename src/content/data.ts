@@ -11,8 +11,7 @@
 
 export const profile = {
   name: "Aakash Mallik",
-  title: "Software Developer",
-  subtitle: "AI Engineer",
+  title: "Generalist Engineer",
   email: "aakashmallik7777@gmail.com",
   location: "India",
 
@@ -27,13 +26,21 @@ export const profile = {
     scholar: "https://scholar.google.com/citations?user=b1ZPeEcAAAAJ&hl=en",
   },
 
-  // Short bio for the homepage - use {highlight} syntax for colored spans
-  bio: [
-    "{Generalist|orange}{Software Engineer|blue} & {Researcher|green}. Currently at {Wells Fargo|blue}, working on Debt Capital Market platforms. I explore Agentic AI systems and implement them in my free time.",
-    " {From research to real systems|orange} - That's my engineering way. I love to understand the underlying fundamental principles and building from bottom up. I also aim to be a {Full Stack Engineer|green} - {NO HOLD UP!!!|pink} not the MERN stack kinda guy but rather someone who understands the entire AI stack from  chip architecture to GPU programming right from distributed training of LLMs upto there distributed deployment and efficient inference (including on edge devices). This is the {Goal|pink} I try to work towards daily trying to be a bit better everyday.",
-    "Previously shipped {Second Brain pipelines|purple} at NeoSapien, built classical ML models and speech-to-text infrastructure, and won the {SUI Overflow 2025|pink} hackathon. Connect with me on {LinkedIn|blue} or {X|green} or just drop me an email for work or collab.",
-    "I love exploring different stuff. {Philosophy|purple}, {Literature|orange}, {Anime|pink}, {Webtoons|green} and (irregularly){Gym|yellow} take up a major chunk of my time too.",
-  ],
+  // Short bio for the homepage.
+  // `lead` is a punchy intro line; `points` render as scannable bullets.
+  // Use {text|color} syntax anywhere for colored spans.
+  about: {
+    lead:
+      "Currently at {Wells Fargo|blue} building Debt Capital Market platforms, and FAFO-ing {AI research stuff|purple} in my free time.",
+    points: [
+      "{From research to real systems|orange} — I like understanding the fundamentals and building bottom-up.",
+      "Chasing the {full AI stack|green} end to end — {not the MERN kind|pink}, but chip architecture and GPU programming through distributed training and efficient inference, edge devices included. A bit better every day.",
+      "Currently learning: {Agentic AI systems|purple},{LLM posttraining|blue} and {LLM serving infra|green}",
+      "Previously: {Second Brain pipelines|purple} at NeoSapien, classical ML + speech-to-text infra, and won {SUI Overflow 2025|pink}.",
+      "Off-screen: {Literature|orange}, {Anime|pink}, {Webtoons|green}, and (irregularly) at the {Gym|yellow}.",
+      "Connect with me on {LinkedIn|blue} or {X|pink} or drop me an email at {aakashmallik7777@gmail.com|green}"
+    ],
+  },
 };
 
 // =============================================================================
@@ -92,8 +99,10 @@ export interface ExperienceItem {
   role: string;
   period: string;
   color: HighlightColor;
-  // Use {text|color} syntax for inline highlights in description
+  // `description` is a short lead line; `points` render as bullets below it.
+  // Use {text|color} syntax for inline highlights in either.
   description: string;
+  points: string[];
 }
 
 export const experience: ExperienceItem[] = [
@@ -103,15 +112,12 @@ export const experience: ExperienceItem[] = [
     period: "Aug 2025 - Present",
     color: "blue",
     description:
-      "Working on the {New Issuance Trading platform|blue} with {ReactJs and Redux|green}, supporting all Debt Capital Market transactions across production releases. Also building {agentic workflows and MCPs|purple} to improve business-context awareness in coding assistants; developed an AI-assisted PR review system cutting review time by {30%|orange}. Owning migration from WAF & Selenium to {Playwright|blue}.",
-  },
-  {
-    company: "Attenomics Lab",
-    role: "ML Engineer (Contract)",
-    period: "Apr 2025 - Jun 2025",
-    color: "green",
-    description:
-      "Developed a {DistilBERT model with triplet loss|green} pipeline to semantically score high-volume scraped Tweets — improved performance by {~10%|green} over baseline and cut operational cost by {~$200/month|orange}. Built a {hybrid RAG system|purple} with multi-tiered retrieval for a Reasoning Brand Marketing & Insights chatbot.",
+      "Building the {New Issuance Trading platform|blue} with {React & Redux|green}, supporting Debt Capital Market transactions across production releases.",
+    points: [
+      "Building {agentic workflows & MCPs|purple} for business-context-aware coding assistants.",
+      "Shipped an AI-assisted Github PR review system — cut review time by {30%|orange}.",
+      "Owning the migration from WAF & Selenium testing automation to {Playwright|blue}.",
+    ],
   },
   {
     company: "NeoSapien",
@@ -119,15 +125,11 @@ export const experience: ExperienceItem[] = [
     period: "Aug 2024 - Mar 2025",
     color: "purple",
     description:
-      "Implemented the {Second Brain pipeline|purple} using RAG, Self-discover, and Chain-of-Thought paradigms — evaluated prompting, chunking, and embedding strategies for the QA Chatbot. Deployed retrieval and storage back-end systems with {Firestore & Qdrant|blue}, reducing pipeline response latency by {46.5%|orange}.",
-  },
-  {
-    company: "OnTheRecord Technology",
-    role: "ML Engineer (Contract)",
-    period: "Nov 2024 - Jan 2025",
-    color: "orange",
-    description:
-      "Worked on {BlueCat|orange}, a desktop application for legal proceedings transcription in courts. As a founding engineer, built {speech-to-text model|green} infrastructure and coded key frontend components.",
+      "Implemented the {Second Brain pipeline|purple} for the QA chatbot.",
+    points: [
+      "Used RAG, Self-Discover & Chain-of-Thought; Benchmarked, wrote Evals and optimized prompting, chunking, and embedding strategies.",
+      "Deployed retrieval/storage back-end with {Firestore & Qdrant|blue} — latency down {46.5%|orange}.",
+    ],
   },
   {
     company: "Wells Fargo",
@@ -135,7 +137,58 @@ export const experience: ExperienceItem[] = [
     period: "May 2024 - Jul 2024",
     color: "yellow",
     description:
-      "Led a 3-member team in the {Process Transformation|yellow} group, delivering {RPA solutions|yellow} to replace manual workflows. Built a full-stack {skill-based task matching|green} platform serving ~1200 employees, reducing task allotment time by {~98%|pink}.",
+      "Led a 3-member team in the {Process Transformation|yellow} group.",
+    points: [
+      "Delivered {RPA solutions|yellow} replacing manual workflows.",
+      "Built a {skill-based task-matching|green} platform for ~1200 employees — allotment time down {~98%|pink}.",
+    ],
+  },
+];
+
+// =============================================================================
+// FREELANCE & CONTRACT - Same shape as experience, minus the time period
+// =============================================================================
+
+export interface FreelanceItem {
+  company: string;
+  role: string;
+  color: HighlightColor;
+  // `description` is a short lead line; `points` render as bullets below it.
+  description: string;
+  points: string[];
+}
+
+export const freelance: FreelanceItem[] = [
+  {
+    company: "Setconnect - Kirloskar Ferrous Limited",
+    role: "ML Engineer",
+    color: "blue",
+    description:
+      "Data-science engagement to cut {coke consumption|blue} by {~20 kg/T|orange} in the iron-making process.",
+    points: [
+      "Ran exploratory data analysis and predictive modelling on plant process and laboratory chemicaltest data.",
+      "Carried out an on-ground plant visit to map the end-to-end process.",
+    ],
+  },
+  {
+    company: "Attenomics Lab",
+    role: "ML Engineer",
+    color: "green",
+    description: "Semantic scoring for high-volume scraped Tweets.",
+    points: [
+      "{DistilBERT + triplet-loss|green} pipeline — {~10%|green} over baseline, {~$200/month|orange} cost cut.",
+      "Built a {hybrid RAG system|purple} with multi-tiered retrieval for a brand marketing & insights chatbot.",
+    ],
+  },
+  {
+    company: "OnTheRecord Technology",
+    role: "Founding Engineer",
+    color: "orange",
+    description: "Founding engineer on {BlueCat|orange}, a courtroom transcription desktop app.",
+    points: [
+      "Built {speech-to-text|green} model infrastructure.",
+      "Coded key frontend components.",
+    ],
   },
 ];
 

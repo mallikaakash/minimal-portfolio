@@ -5,7 +5,13 @@ import rehypePrettyCode from "rehype-pretty-code";
 import Link from "next/link";
 import { ArrowLeft, Sun, Moon } from "lucide-react";
 
-import { getAllBlogSlugs, getBlogPost, calculateReadingTime } from "@/lib/blog";
+import {
+  getAllBlogSlugs,
+  getBlogPost,
+  calculateReadingTime,
+  extractToc,
+  slugifyHeading,
+} from "@/lib/blog";
 import { BlogLayout } from "@/components/blog/BlogLayout";
 import { Sidenote } from "@/components/blog/Sidenote";
 import { Hl, Highlight } from "@/components/blog/Highlight";
@@ -13,12 +19,34 @@ import { Figure } from "@/components/blog/Figure";
 import { navigation } from "@/content/data";
 import { ThemeToggle } from "./theme-toggle";
 
+// Recursively pull the plain text out of a React node (for heading anchors).
+function nodeToText(node: React.ReactNode): string {
+  if (node == null || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(nodeToText).join("");
+  if (typeof node === "object" && "props" in node) {
+    return nodeToText((node as React.ReactElement<{ children?: React.ReactNode }>).props.children);
+  }
+  return "";
+}
+
 // MDX Components available in blog posts
 const mdxComponents = {
   Sidenote,
   Hl,
   Highlight,
   Figure,
+  // Give headings stable ids so the table of contents can link to them.
+  h2: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h2 id={slugifyHeading(nodeToText(children))} {...props}>
+      {children}
+    </h2>
+  ),
+  h3: ({ children, ...props }: React.HTMLAttributes<HTMLHeadingElement>) => (
+    <h3 id={slugifyHeading(nodeToText(children))} {...props}>
+      {children}
+    </h3>
+  ),
   // Override default elements for better styling
   a: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
     <a href={href} target={href?.startsWith("http") ? "_blank" : undefined} rel={href?.startsWith("http") ? "noopener noreferrer" : undefined} {...props}>
@@ -87,6 +115,8 @@ export default async function BlogPostPage({
     readingTime,
   };
 
+  const toc = extractToc(post.content);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -107,9 +137,9 @@ export default async function BlogPostPage({
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm transition-colors ${
+                className={`nav-link text-sm transition-colors ${
                   item.href === "/blog"
-                    ? "text-foreground font-medium"
+                    ? "text-foreground font-medium active"
                     : "text-foreground-muted hover:text-foreground"
                 }`}
               >
@@ -123,7 +153,7 @@ export default async function BlogPostPage({
 
       {/* Main Content */}
       <main className="pt-20 pb-16 overflow-visible">
-        <BlogLayout frontmatter={frontmatter}>
+        <BlogLayout frontmatter={frontmatter} toc={toc}>
           <MDXRemote
             source={post.content}
             components={mdxComponents}

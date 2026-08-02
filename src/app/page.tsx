@@ -5,7 +5,7 @@ import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { profile, education, experience, navigation, highlightColors } from "@/content/data";
+import { profile, education, experience, freelance, navigation, highlightColors } from "@/content/data";
 import { HighlightedText } from "@/lib/utils";
 
 export default function Home() {
@@ -26,9 +26,9 @@ export default function Home() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm transition-colors ${
+                className={`nav-link text-sm transition-colors ${
                   item.href === "/"
-                    ? "text-foreground font-medium"
+                    ? "text-foreground font-medium active"
                     : "text-foreground-muted hover:text-foreground"
                 }`}
               >
@@ -38,7 +38,7 @@ export default function Home() {
             {mounted && (
               <button
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                className="p-1.5 rounded-full hover:bg-background-secondary transition-colors"
+                className="theme-toggle p-1.5 rounded-full hover:bg-background-secondary transition-colors"
                 aria-label="Toggle theme"
               >
                 {resolvedTheme === "dark" ? (
@@ -56,31 +56,34 @@ export default function Home() {
       <main className="flex-1 px-6 pt-20 pb-8">
         <div className="max-w-6xl mx-auto ">
           {/* Name & Title - Full Width Header */}
-          <div className="mb-8">
+          <div className="mb-8 rise-in">
             <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight leading-tight">
               {profile.name}
             </h1>
-            <p className="text-lg text-foreground-muted mt-2 ">
+            <p className="text-lg text-foreground-muted mt-3 ">
               <span className={highlightColors.blue}>{profile.title}</span>
-              {" & "}
-              <span className={highlightColors.green}>{profile.subtitle}</span>
             </p>
           </div>
 
           {/* Two Column Layout - About/Education + Experience */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
             {/* Left Column - About + Education */}
-            <div className="lg:col-span-5 space-y-8">
+            <div className="lg:col-span-5 space-y-8 rise-in" style={{ animationDelay: "0.1s" }}>
               {/* About */}
-              <h2 className="text-xl font-semibold text-foreground mb-4 underline">
+              <div>
+                <h2 className="text-xl font-semibold text-foreground mb-4 underline">
                   Lil bit about me
                 </h2>
-              <div className="space-y-3 text-base leading-relaxed text-foreground-muted">
-                {profile.bio.map((paragraph, index) => (
-                  <p key={index}>
-                    <HighlightedText text={paragraph} />
-                  </p>
-                ))}
+                <p className="text-base leading-relaxed text-foreground-body">
+                  <HighlightedText text={profile.about.lead} />
+                </p>
+                <ul className="dot-bullets mt-4 space-y-2.5 text-base leading-relaxed text-foreground-body">
+                  {profile.about.points.map((point, index) => (
+                    <li key={index}>
+                      <HighlightedText text={point} />
+                    </li>
+                  ))}
+                </ul>
               </div>
 
               {/* Links */}
@@ -159,7 +162,7 @@ export default function Home() {
             </div>
 
             {/* Right Column - Experience */}
-            <div className="lg:col-span-7">
+            <div className="lg:col-span-7 rise-in" style={{ animationDelay: "0.2s" }}>
               <h2 className="text-xl font-semibold text-foreground mb-4 underline">
                 Experience
               </h2>
@@ -181,12 +184,57 @@ export default function Home() {
                       </span>
                     </div>
 
-                    {/* Description */}
-                    <p className="text-sm text-foreground-muted leading-relaxed">
+                    {/* Lead line */}
+                    <p className="text-sm text-foreground-body leading-relaxed">
                       <HighlightedText text={job.description} />
                     </p>
+
+                    {/* Bullets */}
+                    <ul className="dot-bullets mt-1.5 space-y-1 text-sm text-foreground-body leading-relaxed">
+                      {job.points.map((point, i) => (
+                        <li key={i}>
+                          <HighlightedText text={point} />
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                 ))}
+              </div>
+
+              {/* Freelance & Contract */}
+              <div className="pt-6 mt-8 border-t border-border">
+                <h2 className="text-xl font-semibold text-foreground mb-4 underline">
+                  Freelance &amp; Contract
+                </h2>
+
+                <div className="space-y-5">
+                  {freelance.map((job, index) => (
+                    <div key={index} className="group">
+                      {/* Header — no time period */}
+                      <h3 className="font-medium mb-1">
+                        <span className={highlightColors[job.color]}>{job.company}</span>
+                        <span className="text-foreground-muted font-normal">
+                          {" : "}
+                          {job.role}
+                        </span>
+                      </h3>
+
+                      {/* Lead line */}
+                      <p className="text-sm text-foreground-body leading-relaxed">
+                        <HighlightedText text={job.description} />
+                      </p>
+
+                      {/* Bullets */}
+                      <ul className="dot-bullets mt-1.5 space-y-1 text-sm text-foreground-body leading-relaxed">
+                        {job.points.map((point, i) => (
+                          <li key={i}>
+                            <HighlightedText text={point} />
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
