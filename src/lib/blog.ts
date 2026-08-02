@@ -115,6 +115,60 @@ export function calculateReadingTime(content: string): number {
 }
 
 /**
+ * Turn a heading string into a URL-safe anchor slug.
+ * Used both to build the table of contents and to id the rendered headings,
+ * so the two must stay in sync.
+ */
+export function slugifyHeading(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+}
+
+export interface TocItem {
+  depth: number; // 2 = h2, 3 = h3
+  text: string;
+  slug: string;
+}
+
+/**
+ * Extract an h2/h3 table of contents from raw MDX content.
+ * Skips fenced code blocks and strips inline markdown/MDX from heading text.
+ */
+export function extractToc(content: string): TocItem[] {
+  const lines = content.replace(/\r\n/g, "\n").split("\n");
+  const items: TocItem[] = [];
+  let inFence = false;
+
+  for (const line of lines) {
+    if (/^\s*```/.test(line)) {
+      inFence = !inFence;
+      continue;
+    }
+    if (inFence) continue;
+
+    const match = line.match(/^(#{2,3})\s+(.+?)\s*#*$/);
+    if (!match) continue;
+
+    const depth = match[1].length;
+    const text = match[2]
+      .replace(/<[^>]+>/g, "") // strip MDX/HTML tags, keep inner text
+      .replace(/`([^`]+)`/g, "$1") // inline code
+      .replace(/\*\*?([^*]+)\*\*?/g, "$1") // bold / italic
+      .replace(/\[([^\]]+)\]\([^)]*\)/g, "$1") // links -> text
+      .trim();
+
+    if (text) items.push({ depth, text, slug: slugifyHeading(text) });
+  }
+
+  return items;
+}
+
+/**
  * Format date for display
  */
 export function formatBlogDate(dateStr: string): string {

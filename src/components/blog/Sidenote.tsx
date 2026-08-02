@@ -27,8 +27,8 @@ export function Sidenote({ id, children }: SidenoteProps) {
     }
   };
 
-  // Determine side based on id (odd = right, even = left)
-  const side = id % 2 === 1 ? 'sidenote-right' : 'sidenote-left';
+  // All sidenotes live in the right margin.
+  const side = "sidenote-right";
 
   return (
     <span className="sidenote-wrapper">

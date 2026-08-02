@@ -169,9 +169,9 @@ export default function BlogPage() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`text-sm transition-colors ${
+                className={`nav-link text-sm transition-colors ${
                   item.href === "/blog"
-                    ? "text-foreground font-medium"
+                    ? "text-foreground font-medium active"
                     : "text-foreground-muted hover:text-foreground"
                 }`}
               >
@@ -183,7 +183,7 @@ export default function BlogPage() {
                 onClick={() =>
                   setTheme(resolvedTheme === "dark" ? "light" : "dark")
                 }
-                className="p-1.5 rounded-full hover:bg-background-secondary transition-colors"
+                className="theme-toggle p-1.5 rounded-full hover:bg-background-secondary transition-colors"
                 aria-label="Toggle theme"
               >
                 {resolvedTheme === "dark" ? (
@@ -354,7 +354,7 @@ export default function BlogPage() {
                               <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-60 transition-opacity shrink-0" />
                             </h2>
                           </a>
-                          <p className="text-sm text-foreground-muted mt-1 leading-relaxed">
+                          <p className="text-sm text-foreground-body mt-1 leading-relaxed">
                             {post.description}
                           </p>
                           <div className="flex flex-wrap items-center gap-1.5 mt-2.5">
