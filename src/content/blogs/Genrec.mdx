@@ -1,0 +1,28 @@
+---
+title: "Genrec - The Netflix way of Recommending Bangers"
+date: "2026-09-15"
+description: "Go ditched classes — but it's more object-oriented than you think. A quick sketch of Go's composition-first philosophy, the DCI paradigm, and why structs + interfaces beat deep inheritance."
+author: "Aakash Mallik"
+readingTime: TBD
+tags: ["Recommender Systems"]
+externalUrls:
+  - platform:
+    url: ""
+---
+
+I have been working on this project a couple of weeks back and ever since been procrastinating writing about it. This one is going to more of a dump 
+of all that I have learnt while reading and implementing this blog by Netflix - 
+
+Few things that I learnt about -
+
+- The Genrec architecture itself that is has been implemented by Netflix
+- previously SOTA architectures - Bert4Rec and
+- Implementing a prefill only inference
+- CUDA graphs and becnhmarking the delta in performance
+
+[explain briefly about prefill and decode, briefly explain about the steps of transformer especially the last head too. Diagram better]
+
+The genrec architecture itself is pretty intuitive and ingeneous. It commpiles a row into a singular prompt and passes it through a autoregressive model 
+to get the score. The final lm_head is used ONLY in the training phase to prevent too much drift and catastrophic destruction of the pretrained knowledge
+of the model. The real novelty is a separate last layer head which has all items in the catalogue - the output is the probability of the user liking 
+the given item from that catalogue. there is no expensive autoregressive step. just prefill -> output.
